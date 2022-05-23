@@ -81,7 +81,6 @@
     "vue-loader": "^15.0.9",
     "vue-style-loader": "^4.1.0",
     "vue-template-compiler": "^2.5.16",
-    "webpack": "^2.6.1",
     "webpack-bundle-analyzer": "^3.3.2",
     "webpack-dev-middleware": "^1.10.0",
     "webpack-hot-middleware": "^2.18.0",
@@ -128,6 +127,7 @@
     "turndown": "^4.0.2",
     "vue": "^2.5.16",
     "vuex": "^3.0.1",
+    "webpack": "^2.6.1",
     "webpack-merge": "^4.1.2"
   },
   "engines": {
