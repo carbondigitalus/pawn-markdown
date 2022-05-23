@@ -1,11 +1,11 @@
 {
-  "name": "stackedit",
-  "version": "5.14.10",
+  "name": "pawn-markdown",
+  "version": "5.15.0",
   "description": "Free, open-source, full-featured Markdown editor",
-  "author": "Benoit Schweblin",
+  "author": "Fort Embr",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/benweet/stackedit/issues"
+    "url": "https://github.com/fortembr/pawn-markdown/issues"
   },
   "main": "index.js",
   "scripts": {
