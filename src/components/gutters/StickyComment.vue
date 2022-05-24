@@ -19,15 +19,9 @@ export default {
     top: 0,
   }),
   computed: {
-    ...mapGetters('layout', [
-      'constants',
-    ]),
-    ...mapState('discussion', [
-      'isCommenting',
-    ]),
-    ...mapGetters('discussion', [
-      'currentDiscussionLastComment',
-    ]),
+    ...mapGetters('layout', ['constants']),
+    ...mapState('discussion', ['isCommenting']),
+    ...mapGetters('discussion', ['currentDiscussionLastComment']),
   },
 };
 </script>
