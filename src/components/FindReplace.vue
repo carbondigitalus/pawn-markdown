@@ -46,8 +46,8 @@ const accessor = (fieldName, setterName) => ({
     store.commit(`findReplace/${setterName}`, value);
   },
 });
-
-const computedLayoutSetting = key => ({
+// eslint-disable-next-line arrow-parens
+const computedLayoutSetting = (key) => ({
   get() {
     return store.getters['data/layoutSettings'][key];
   },
@@ -65,13 +65,10 @@ class DynamicClassApplier {
     editorSvc.clEditor.addMarker(this.startMarker);
     editorSvc.clEditor.addMarker(this.endMarker);
     if (!silent) {
-      this.classApplier = new EditorClassApplier(
-        [`find-replace-${this.startMarker.id}`, cssClass],
-        () => ({
-          start: this.startMarker.offset,
-          end: this.endMarker.offset,
-        }),
-      );
+      this.classApplier = new EditorClassApplier([`find-replace-${this.startMarker.id}`, cssClass], () => ({
+        start: this.startMarker.offset,
+        end: this.endMarker.offset,
+      }));
     }
   }
 
@@ -81,7 +78,7 @@ class DynamicClassApplier {
     if (this.classApplier) {
       this.classApplier.stop();
     }
-  }
+  };
 }
 
 export default {
@@ -90,10 +87,7 @@ export default {
     findPosition: 0,
   }),
   computed: {
-    ...mapState('findReplace', [
-      'type',
-      'lastOpen',
-    ]),
+    ...mapState('findReplace', ['type', 'lastOpen']),
     findText: accessor('findText', 'setFindText'),
     replaceText: accessor('replaceText', 'setReplaceText'),
     findCaseSensitive: computedLayoutSetting('findCaseSensitive'),
@@ -126,11 +120,8 @@ export default {
           });
           offsetList.forEach((offset, i) => {
             const key = `${offset.start}:${offset.end}`;
-            this.classAppliers[key] = oldClassAppliers[key] || new DynamicClassApplier(
-              'find-replace-highlighting',
-              offset,
-              i > 200,
-            );
+            this.classAppliers[key] =
+              oldClassAppliers[key] || new DynamicClassApplier('find-replace-highlighting', offset, i > 200);
           });
         } catch (e) {
           // Ignore
@@ -166,7 +157,8 @@ export default {
       const startOffset = Math.min(selectionMgr.selectionStart, selectionMgr.selectionEnd);
       const endOffset = Math.max(selectionMgr.selectionStart, selectionMgr.selectionEnd);
       const keys = Object.keys(this.classAppliers);
-      const finder = checker => (key) => {
+      // eslint-disable-next-line arrow-parens
+      const finder = (checker) => (key) => {
         if (checker(this.classAppliers[key]) && selectedClassApplier !== this.classAppliers[key]) {
           this.selectedClassApplier = this.classAppliers[key];
           return true;
@@ -175,13 +167,25 @@ export default {
       };
       if (mode === 'backward') {
         this.selectedClassApplier = this.classAppliers[keys[keys.length - 1]];
-        keys.reverse().some(finder(classApplier => classApplier.startMarker.offset <= startOffset));
+        // eslint-disable-next-line max-len, arrow-parens
+        keys.reverse().some(finder((classApplier) => classApplier.startMarker.offset <= startOffset));
       } else if (mode === 'selection') {
-        keys.some(finder(classApplier => classApplier.startMarker.offset === startOffset &&
-          classApplier.endMarker.offset === endOffset));
+        // eslint-disable-next-line function-paren-newline
+        keys.some(
+          // eslint-disable-next-line function-paren-newline
+          finder(
+            // eslint-disable-next-line arrow-parens
+            (classApplier) =>
+              // eslint-disable-next-line max-len
+              classApplier.startMarker.offset === startOffset && classApplier.endMarker.offset === endOffset,
+            // eslint-disable-next-line function-paren-newline
+          ),
+          // eslint-disable-next-line function-paren-newline
+        );
       } else if (mode === 'forward') {
         this.selectedClassApplier = this.classAppliers[keys[0]];
-        keys.some(finder(classApplier => classApplier.endMarker.offset >= endOffset));
+        // eslint-disable-next-line arrow-parens
+        keys.some(finder((classApplier) => classApplier.endMarker.offset >= endOffset));
       }
       if (this.selectedClassApplier) {
         selectionMgr.setSelectionStartEnd(
@@ -233,10 +237,8 @@ export default {
     this.classAppliers = {};
 
     // Highlight occurences
-    this.debouncedHighlightOccurrences = cledit.Utils.debounce(
-      () => this.highlightOccurrences(),
-      25,
-    );
+    // eslint-disable-next-line max-len
+    this.debouncedHighlightOccurrences = cledit.Utils.debounce(() => this.highlightOccurrences(), 25);
     // Refresh highlighting when find text changes or changing options
     this.$watch(() => this.findText, this.debouncedHighlightOccurrences);
     this.$watch(() => this.findCaseSensitive, this.debouncedHighlightOccurrences);
@@ -245,16 +247,20 @@ export default {
     editorSvc.clEditor.on('contentChanged', this.debouncedHighlightOccurrences);
 
     // Last open changes trigger focus on text input and find occurence in selection
-    this.$watch(() => this.lastOpen, () => {
-      const elt = this.$el.querySelector(`.find-replace__text-input--${this.type}`);
-      elt.focus();
-      elt.setSelectionRange(0, this[`${this.type}Text`].length);
-      // Highlight and find in selection
-      this.state = null;
-      this.debouncedHighlightOccurrences();
-    }, {
-      immediate: true,
-    });
+    this.$watch(
+      () => this.lastOpen,
+      () => {
+        const elt = this.$el.querySelector(`.find-replace__text-input--${this.type}`);
+        elt.focus();
+        elt.setSelectionRange(0, this[`${this.type}Text`].length);
+        // Highlight and find in selection
+        this.state = null;
+        this.debouncedHighlightOccurrences();
+      },
+      {
+        immediate: true,
+      },
+    );
 
     // Close on escape
     this.onKeyup = (evt) => {
@@ -266,8 +272,9 @@ export default {
     window.addEventListener('keyup', this.onKeyup);
 
     // Unselect class applier when focus is out of the panel
-    this.onFocusIn = () => this.$el.contains(document.activeElement) ||
-      setTimeout(() => this.unselectClassApplier(), 15);
+    this.onFocusIn = () =>
+      // eslint-disable-next-line max-len
+      this.$el.contains(document.activeElement) || setTimeout(() => this.unselectClassApplier(), 15);
     window.addEventListener('focusin', this.onFocusIn);
   },
   destroyed() {
