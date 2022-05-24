@@ -50,14 +50,18 @@ export default modalTemplate({
         this.setError('projectUrl');
       } else {
         const path = this.path && this.path.replace(/^\//, '');
-        const url = utils.addQueryParams('app', {
-          providerId: 'gitlabWorkspace',
-          serverUrl: this.config.token.serverUrl,
-          projectPath,
-          branch: this.branch || 'master',
-          path: path || undefined,
-          sub: this.config.token.sub,
-        }, true);
+        const url = utils.addQueryParams(
+          'app',
+          {
+            providerId: 'gitlabWorkspace',
+            serverUrl: this.config.token.serverUrl,
+            projectPath,
+            branch: this.branch || 'master',
+            path: path || undefined,
+            sub: this.config.token.sub,
+          },
+          true,
+        );
         this.config.resolve();
         window.open(url);
       }
