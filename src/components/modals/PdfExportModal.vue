@@ -43,11 +43,8 @@ export default modalTemplate({
             const tokenToRefresh = store.getters['workspace/sponsorToken'];
             return tokenToRefresh && googleHelper.refreshToken(tokenToRefresh);
           }),
-          exportSvc.applyTemplate(
-            currentFile.id,
-            this.allTemplatesById[this.selectedTemplate],
-            true,
-          ),
+          // eslint-disable-next-line max-len
+          exportSvc.applyTemplate(currentFile.id, this.allTemplatesById[this.selectedTemplate], true),
         ]);
 
         try {
