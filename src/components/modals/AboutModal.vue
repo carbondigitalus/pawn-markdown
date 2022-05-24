@@ -42,9 +42,7 @@ export default {
     version: VERSION,
   }),
   computed: {
-    ...mapGetters('modal', [
-      'config',
-    ]),
+    ...mapGetters('modal', ['config']),
     faq() {
       return markdownConversionSvc.defaultConverter.render(faq);
     },
