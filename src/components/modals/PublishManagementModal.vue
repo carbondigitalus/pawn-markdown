@@ -57,9 +57,7 @@ export default {
     ModalInner,
   },
   computed: {
-    ...mapGetters('modal', [
-      'config',
-    ]),
+    ...mapGetters('modal', ['config']),
     ...mapGetters('publishLocation', {
       publishLocations: 'current',
     }),
@@ -68,9 +66,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('notification', [
-      'info',
-    ]),
+    ...mapActions('notification', ['info']),
     remove(location) {
       store.commit('publishLocation/deleteItem', location.id);
       badgeSvc.addBadge('removePublishLocation');
