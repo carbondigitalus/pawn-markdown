@@ -14,9 +14,7 @@ export default {
     maskY: 0,
   }),
   computed: {
-    ...mapGetters('layout', [
-      'styles',
-    ]),
+    ...mapGetters('layout', ['styles']),
   },
   mounted() {
     const tocElt = this.$el.querySelector('.toc__inner');
@@ -34,13 +32,15 @@ export default {
         if (y >= sectionDesc.tocDimension.endOffset) {
           return false;
         }
-        const posInSection = (y - sectionDesc.tocDimension.startOffset)
-          / (sectionDesc.tocDimension.height || 1);
-        const editorScrollTop = sectionDesc.editorDimension.startOffset
-          + (sectionDesc.editorDimension.height * posInSection);
+        // eslint-disable-next-line max-len
+        const posInSection = (y - sectionDesc.tocDimension.startOffset) / (sectionDesc.tocDimension.height || 1);
+        const editorScrollTop =
+          // eslint-disable-next-line max-len, no-mixed-operators
+          sectionDesc.editorDimension.startOffset + sectionDesc.editorDimension.height * posInSection;
         editorSvc.editorElt.parentNode.scrollTop = editorScrollTop;
-        const previewScrollTop = sectionDesc.previewDimension.startOffset
-          + (sectionDesc.previewDimension.height * posInSection);
+        const previewScrollTop =
+          // eslint-disable-next-line max-len, no-mixed-operators
+          sectionDesc.previewDimension.startOffset + sectionDesc.previewDimension.height * posInSection;
         editorSvc.previewElt.parentNode.scrollTop = previewScrollTop;
         return true;
       });
@@ -65,8 +65,9 @@ export default {
       const scrollPosition = editorSvc.getScrollPosition();
       if (scrollPosition) {
         const sectionDesc = editorSvc.previewCtxMeasured.sectionDescList[scrollPosition.sectionIdx];
-        this.maskY = sectionDesc.tocDimension.startOffset +
-          (scrollPosition.posInSection * sectionDesc.tocDimension.height);
+        this.maskY =
+          // eslint-disable-next-line max-len, no-mixed-operators
+          sectionDesc.tocDimension.startOffset + scrollPosition.posInSection * sectionDesc.tocDimension.height;
       }
     };
 
