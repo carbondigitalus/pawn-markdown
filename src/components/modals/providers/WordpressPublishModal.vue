@@ -56,11 +56,8 @@ export default modalTemplate({
         this.setError('domain');
       } else {
         // Return new location
-        const location = wordpressProvider.makeLocation(
-          this.config.token,
-          this.domain,
-          this.postId,
-        );
+        // eslint-disable-next-line max-len
+        const location = wordpressProvider.makeLocation(this.config.token, this.domain, this.postId);
         location.templateId = this.selectedTemplate;
         this.config.resolve(location);
       }
