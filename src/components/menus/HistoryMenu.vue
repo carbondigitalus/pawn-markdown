@@ -80,15 +80,11 @@ export default {
     syncLocationId: null,
   }),
   computed: {
-    ...mapGetters('data', [
-      'syncDataByItemId',
-    ]),
+    ...mapGetters('data', ['syncDataByItemId']),
     ...mapGetters('syncLocation', {
       syncLocations: 'currentWithWorkspaceSyncLocation',
     }),
-    ...mapState('content', [
-      'revisionContent',
-    ]),
+    ...mapState('content', ['revisionContent']),
     syncLocation() {
       return utils.someResult(this.syncLocations, (syncLocation) => {
         if (syncLocation.id === this.syncLocationId) {
@@ -141,7 +137,8 @@ export default {
       return utils.serializeObject(this.historyContext);
     },
     revisions() {
-      return this.allRevisions.slice()
+      return this.allRevisions
+        .slice()
         .sort((revision1, revision2) => revision2.created - revision1.created)
         .slice(0, this.showCount);
     },
@@ -161,9 +158,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('content', [
-      'setRevisionContent',
-    ]),
+    ...mapMutations('content', ['setRevisionContent']),
     async signin() {
       try {
         await googleHelper.signin();
@@ -184,14 +179,22 @@ export default {
         const historyContext = utils.deepCopy(this.historyContext);
         if (historyContext) {
           const provider = providerRegistry.providersById[this.syncLocation.providerId];
-          revisionContentPromise = new Promise((resolve, reject) => store.dispatch(
-            'queue/enqueue',
-            () => provider.getFileRevisionContent({
-              ...historyContext,
-              revisionId: revision.id,
-            })
-              .then(resolve, reject),
-          ));
+          // eslint-disable-next-line function-paren-newline
+          revisionContentPromise = new Promise(
+            (resolve, reject) =>
+              store.dispatch(
+                'queue/enqueue',
+                () =>
+                  provider
+                    .getFileRevisionContent({
+                      ...historyContext,
+                      revisionId: revision.id,
+                    })
+                    .then(resolve, reject),
+                // eslint-disable-next-line function-paren-newline
+              ),
+            // eslint-disable-next-line function-paren-newline
+          );
           revisionContentPromises[revision.id] = revisionContentPromise;
           revisionContentPromise.catch((err) => {
             store.dispatch('notification/error', err);
@@ -200,15 +203,20 @@ export default {
         }
       }
       if (revisionContentPromise) {
-        revisionContentPromise.then(revisionContent =>
-          store.dispatch('content/setRevisionContent', revisionContent));
+        revisionContentPromise.then((revisionContent) => {
+          store.dispatch('content/setRevisionContent', revisionContent);
+        });
       }
     },
     refreshHighlighters() {
       const { revisionContent } = this;
-      editorClassAppliers.forEach(editorClassApplier => editorClassApplier.stop());
+      editorClassAppliers.forEach((editorClassApplier) => {
+        editorClassApplier.stop();
+      });
       editorClassAppliers = [];
-      previewClassAppliers.forEach(previewClassApplier => previewClassApplier.stop());
+      previewClassAppliers.forEach((previewClassApplier) => {
+        previewClassApplier.stop();
+      });
       previewClassAppliers = [];
       if (revisionContent) {
         let offset = 0;
@@ -219,14 +227,8 @@ export default {
               start: offset,
               end: offset + text.length,
             };
-            editorClassAppliers.push(new EditorClassApplier(
-              [`revision-diff--${utils.uid()}`, ...classes],
-              offsets,
-            ));
-            previewClassAppliers.push(new PreviewClassApplier(
-              [`revision-diff--${utils.uid()}`, ...classes],
-              offsets,
-            ));
+            editorClassAppliers.push(new EditorClassApplier([`revision-diff--${utils.uid()}`, ...classes], offsets));
+            previewClassAppliers.push(new PreviewClassApplier([`revision-diff--${utils.uid()}`, ...classes], offsets));
           }
           offset += text.length;
         });
@@ -260,17 +262,18 @@ export default {
             cachedHistoryContextHash = this.historyContextHash;
             revisionContentPromises = {};
             const provider = providerRegistry.providersById[this.syncLocation.providerId];
-            revisionsPromise = new Promise((resolve, reject) => store.dispatch(
-              'queue/enqueue',
-              () => provider
-                .listFileRevisions(historyContext)
-                .then(resolve, reject),
-            ))
-              .catch((err) => {
-                store.dispatch('notification/error', err);
-                cachedHistoryContextHash = null;
-                return [];
-              });
+            // eslint-disable-next-line function-paren-newline
+            revisionsPromise = new Promise(
+              (resolve, reject) =>
+                store.dispatch('queue/enqueue', () => {
+                  provider.listFileRevisions(historyContext).then(resolve, reject);
+                }),
+              // eslint-disable-next-line function-paren-newline
+            ).catch((err) => {
+              store.dispatch('notification/error', err);
+              cachedHistoryContextHash = null;
+              return [];
+            });
           }
           if (revisionsPromise) {
             this.loading = true;
@@ -288,19 +291,19 @@ export default {
       if (historyContext) {
         store.dispatch(
           'queue/enqueue',
-          () => utils.awaitSequence(revisions, async (revision) => {
-            // Make sure revisions and historyContext haven't changed
-            if (!this.destroyed
-              && this.revisions === revisions
-              && this.historyContext === historyContext
-            ) {
-              const provider = providerRegistry.providersById[this.syncLocation.providerId];
-              await provider.loadFileRevision({
-                ...historyContext,
-                revision,
-              });
-            }
-          }),
+          () =>
+            utils.awaitSequence(revisions, async (revision) => {
+              // Make sure revisions and historyContext haven't changed
+              // eslint-disable-next-line max-len
+              if (!this.destroyed && this.revisions === revisions && this.historyContext === historyContext) {
+                const provider = providerRegistry.providersById[this.syncLocation.providerId];
+                await provider.loadFileRevision({
+                  ...historyContext,
+                  revision,
+                });
+              }
+            }),
+          // eslint-disable-next-line function-paren-newline
         );
       }
     },
