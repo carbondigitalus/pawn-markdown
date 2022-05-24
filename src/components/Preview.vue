@@ -34,22 +34,15 @@ export default {
     previewTop: true,
   }),
   computed: {
-    ...mapGetters('file', [
-      'isCurrentTemp',
-    ]),
-    ...mapGetters('layout', [
-      'styles',
-    ]),
+    ...mapGetters('file', ['isCurrentTemp']),
+    ...mapGetters('layout', ['styles']),
   },
   methods: {
-    ...mapActions('data', [
-      'toggleEditor',
-    ]),
+    ...mapActions('data', ['toggleEditor']),
     onClick(evt) {
       let elt = evt.target;
       while (elt !== this.$el) {
-        if (elt.href && elt.href.match(/^https?:\/\//)
-          && (!elt.hash || elt.href.slice(0, appUri.length) !== appUri)) {
+        if (elt.href && elt.href.match(/^https?:\/\//) && (!elt.hash || elt.href.slice(0, appUri.length) !== appUri)) {
           evt.preventDefault();
           const wnd = window.open(elt.href, '_blank');
           wnd.focus();
@@ -64,7 +57,8 @@ export default {
   },
   mounted() {
     const previewElt = this.$el.querySelector('.preview__inner-2');
-    const onDiscussionEvt = cb => (evt) => {
+    // eslint-disable-next-line arrow-parens
+    const onDiscussionEvt = (cb) => (evt) => {
       let elt = evt.target;
       while (elt && elt !== previewElt) {
         if (elt.discussionId) {
@@ -74,30 +68,41 @@ export default {
         elt = elt.parentNode;
       }
     };
-
-    const classToggler = toggle => (discussionId) => {
-      previewElt.getElementsByClassName(`discussion-preview-highlighting--${discussionId}`)
-        .cl_each(elt => elt.classList.toggle('discussion-preview-highlighting--hover', toggle));
-      document.getElementsByClassName(`comment--discussion-${discussionId}`)
-        .cl_each(elt => elt.classList.toggle('comment--hover', toggle));
+    // eslint-disable-next-line arrow-parens
+    const classToggler = (toggle) => (discussionId) => {
+      previewElt
+        .getElementsByClassName(`discussion-preview-highlighting--${discussionId}`)
+        // eslint-disable-next-line arrow-parens
+        .cl_each((elt) => elt.classList.toggle('discussion-preview-highlighting--hover', toggle));
+      document
+        .getElementsByClassName(`comment--discussion-${discussionId}`)
+        // eslint-disable-next-line arrow-parens
+        .cl_each((elt) => elt.classList.toggle('comment--hover', toggle));
     };
 
     previewElt.addEventListener('mouseover', onDiscussionEvt(classToggler(true)));
     previewElt.addEventListener('mouseout', onDiscussionEvt(classToggler(false)));
-    previewElt.addEventListener('click', onDiscussionEvt((discussionId) => {
-      store.commit('discussion/setCurrentDiscussionId', discussionId);
-    }));
+    previewElt.addEventListener(
+      'click',
+      onDiscussionEvt((discussionId) => {
+        store.commit('discussion/setCurrentDiscussionId', discussionId);
+      }),
+    );
 
     this.$watch(
       () => store.state.discussion.currentDiscussionId,
       (discussionId, oldDiscussionId) => {
         if (oldDiscussionId) {
-          previewElt.querySelectorAll(`.discussion-preview-highlighting--${oldDiscussionId}`)
-            .cl_each(elt => elt.classList.remove('discussion-preview-highlighting--selected'));
+          previewElt
+            .querySelectorAll(`.discussion-preview-highlighting--${oldDiscussionId}`)
+            // eslint-disable-next-line arrow-parens
+            .cl_each((elt) => elt.classList.remove('discussion-preview-highlighting--selected'));
         }
         if (discussionId) {
-          previewElt.querySelectorAll(`.discussion-preview-highlighting--${discussionId}`)
-            .cl_each(elt => elt.classList.add('discussion-preview-highlighting--selected'));
+          previewElt
+            .querySelectorAll(`.discussion-preview-highlighting--${discussionId}`)
+            // eslint-disable-next-line arrow-parens
+            .cl_each((elt) => elt.classList.add('discussion-preview-highlighting--selected'));
         }
       },
     );
