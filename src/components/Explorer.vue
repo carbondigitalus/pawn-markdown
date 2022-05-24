@@ -36,22 +36,14 @@ export default {
     ExplorerNode,
   },
   computed: {
-    ...mapState([
-      'light',
-    ]),
-    ...mapState('explorer', [
-      'newChildNode',
-    ]),
-    ...mapGetters('explorer', [
-      'rootNode',
-      'selectedNode',
-    ]),
+    ...mapState(['light']),
+    ...mapState('explorer', ['newChildNode']),
+    ...mapGetters('explorer', ['rootNode', 'selectedNode']),
   },
   methods: {
-    ...mapActions('data', [
-      'toggleExplorer',
-    ]),
-    newItem: isFolder => explorerSvc.newItem(isFolder),
+    ...mapActions('data', ['toggleExplorer']),
+    // eslint-disable-next-line arrow-parens
+    newItem: (isFolder) => explorerSvc.newItem(isFolder),
     deleteItem: () => explorerSvc.deleteItem(),
     editItem() {
       const node = this.selectedNode;
@@ -66,7 +58,8 @@ export default {
       (currentFileId) => {
         store.commit('explorer/setSelectedId', currentFileId);
         store.dispatch('explorer/openNode', currentFileId);
-      }, {
+      },
+      {
         immediate: true,
       },
     );
