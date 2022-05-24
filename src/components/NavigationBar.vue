@@ -2,13 +2,13 @@
   <nav class="navigation-bar" :class="{'navigation-bar--editor': styles.showEditor && !revisionContent, 'navigation-bar--light': light}">
     <!-- Explorer -->
     <div class="navigation-bar__inner navigation-bar__inner--left navigation-bar__inner--button">
-      <button class="navigation-bar__button navigation-bar__button--close button" v-if="light" @click="close()" v-title="'Close StackEdit'"><icon-check-circle></icon-check-circle></button>
+      <button class="navigation-bar__button navigation-bar__button--close button" v-if="light" @click="close()" v-title="'Close PawnMD'"><icon-check-circle></icon-check-circle></button>
       <button class="navigation-bar__button navigation-bar__button--explorer-toggler button" v-else tour-step-anchor="explorer" @click="toggleExplorer()" v-title="'Toggle explorer'"><icon-folder></icon-folder></button>
     </div>
     <!-- Side bar -->
     <div class="navigation-bar__inner navigation-bar__inner--right navigation-bar__inner--button">
-      <a class="navigation-bar__button navigation-bar__button--stackedit button" v-if="light" href="app" target="_blank" v-title="'Open StackEdit'"><icon-provider provider-id="stackedit"></icon-provider></a>
-      <button class="navigation-bar__button navigation-bar__button--stackedit button" v-else tour-step-anchor="menu" @click="toggleSideBar()" v-title="'Toggle side bar'"><icon-provider provider-id="stackedit"></icon-provider></button>
+      <a class="navigation-bar__button navigation-bar__button--stackedit button" v-if="light" href="app" target="_blank" v-title="'Open PawnMD'"><icon-provider provider-id="stackedit"></icon-provider></a>
+      <button class="navigation-bar__button navigation-bar__button--pawnmd button" v-else tour-step-anchor="menu" @click="toggleSideBar()" v-title="'Toggle side bar'"><icon-provider provider-id="pawnmd"></icon-provider></button>
     </div>
     <div class="navigation-bar__inner navigation-bar__inner--right navigation-bar__inner--title flex flex--row">
       <!-- Spinner -->
@@ -292,7 +292,7 @@ export default {
     padding: 0 4px;
     width: 38px;
 
-    &.navigation-bar__button--stackedit {
+    &.navigation-bar__button--pawnmd {
       opacity: 0.85;
 
       &:active,
