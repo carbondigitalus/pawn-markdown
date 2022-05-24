@@ -38,17 +38,17 @@ export default {
   props: ['comment'],
   computed: {
     showReply() {
-      return this.comment === store.getters['discussion/currentDiscussionLastComment'] &&
-        !store.state.discussion.isCommenting;
+      return (
+        this.comment === store.getters['discussion/currentDiscussionLastComment'] &&
+        !store.state.discussion.isCommenting
+      );
     },
     text() {
       return htmlSanitizer.sanitizeHtml(editorSvc.converter.render(this.comment.text));
     },
   },
   methods: {
-    ...mapMutations('discussion', [
-      'setIsCommenting',
-    ]),
+    ...mapMutations('discussion', ['setIsCommenting']),
     async removeComment() {
       try {
         await store.dispatch('modal/open', 'commentDeletion');
