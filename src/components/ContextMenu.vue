@@ -16,11 +16,7 @@ import store from '../store';
 
 export default {
   computed: {
-    ...mapState('contextMenu', [
-      'coordinates',
-      'items',
-      'resolve',
-    ]),
+    ...mapState('contextMenu', ['coordinates', 'items', 'resolve']),
   },
   methods: {
     close(item = null) {
@@ -38,7 +34,7 @@ export default {
   height: 100%;
   font-size: 14px;
   line-height: 18px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   user-select: none;
 }
 
