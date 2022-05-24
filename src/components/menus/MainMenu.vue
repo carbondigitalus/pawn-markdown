@@ -115,7 +115,7 @@
     </menu-entry>
     <menu-entry @click.native="about">
       <icon-help-circle slot="icon"></icon-help-circle>
-      About StackEdit
+      About PawnMD
     </menu-entry>
   </div>
 </template>
@@ -226,7 +226,7 @@ export default {
     async reset() {
       try {
         await store.dispatch('modal/open', 'reset');
-        localStorage.setItem('resetStackEdit', '1');
+        localStorage.setItem('resetPawnMD', '1');
         window.location.reload();
       } catch (e) {
         /* Cancel */
