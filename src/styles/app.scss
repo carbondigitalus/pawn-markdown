@@ -390,3 +390,20 @@ textarea {
   }
   // scss-lint:enable ImportantRule
 }
+
+.tour-step__inner {
+  background-color: $blue !important;
+  color: white;
+}
+.navigation-bar--editor {
+  background-color: $blue;
+}
+.icon-provider--stackedit {
+  background-image: url("../assets/icon.png");
+}
+.token {
+  color: $blue;
+}
+.layout__panel--status-bar {
+  background-color: $blue !important;
+}
