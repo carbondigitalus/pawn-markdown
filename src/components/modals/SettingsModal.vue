@@ -57,9 +57,7 @@ export default {
     error: null,
   }),
   computed: {
-    ...mapGetters('modal', [
-      'config',
-    ]),
+    ...mapGetters('modal', ['config']),
     strippedCustomSettings() {
       return this.customSettings === emptySettings ? '\n' : this.customSettings.replace(/\t/g, '  ');
     },
@@ -87,10 +85,12 @@ export default {
           badgeSvc.addBadge('changeShortcuts');
         }
         const computedSettings = store.getters['data/computedSettings'];
-        const customSettingsCount = Object
-          .keys(customSettings)
-          .filter(key => key !== 'shortcuts' && computedSettings[key])
-          .length;
+        // eslint-disable-next-line function-paren-newline
+        const customSettingsCount = Object.keys(customSettings).filter(
+          // eslint-disable-next-line arrow-parens
+          (key) => key !== 'shortcuts' && computedSettings[key],
+          // eslint-disable-next-line function-paren-newline
+        ).length;
         if (customSettingsCount) {
           badgeSvc.addBadge('changeSettings');
         }
