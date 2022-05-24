@@ -26,12 +26,9 @@ body {
 ::-webkit-scrollbar {
   background-color: transparent;
 
-  /* stylelint-disable-next-line selector-pseudo-class-no-unknown */
   &:horizontal {
     height: 8px;
   }
-
-  /* stylelint-disable-next-line selector-pseudo-class-no-unknown */
   &:vertical {
     width: 8px;
   }
