@@ -69,13 +69,11 @@ import CouchdbWorkspaceModal from './modals/providers/CouchdbWorkspaceModal';
 import CouchdbCredentialsModal from './modals/providers/CouchdbCredentialsModal';
 
 const getTabbables = (container) => {
-  container.querySelectorAll('a[href], button, .textfield, input[type=checkbox]');
-  // Filter enabled and visible element
-  // .cl_filter((el) => {
-  //   !el.disabled &&
-  //     el.offsetParent !== null &&
-  //     !el.classList.contains('not-tabbable');
-  // });
+  container
+    .querySelectorAll('a[href], button, .textfield, input[type=checkbox]')
+    // Filter enabled and visible element
+    // eslint-disable-next-line arrow-parens
+    .cl_filter((el) => !el.disabled && el.offsetParent !== null && !el.classList.contains('not-tabbable'));
 };
 
 export default {
