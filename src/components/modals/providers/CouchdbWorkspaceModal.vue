@@ -35,10 +35,14 @@ export default modalTemplate({
       if (!this.dbUrl) {
         this.setError('dbUrl');
       } else {
-        const url = utils.addQueryParams('app', {
-          providerId: 'couchdbWorkspace',
-          dbUrl: this.dbUrl,
-        }, true);
+        const url = utils.addQueryParams(
+          'app',
+          {
+            providerId: 'couchdbWorkspace',
+            dbUrl: this.dbUrl,
+          },
+          true,
+        );
         this.config.resolve();
         window.open(url);
       }
