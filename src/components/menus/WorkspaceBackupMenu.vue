@@ -59,7 +59,7 @@ export default {
           const blob = new Blob([backup], {
             type: 'text/plain;charset=utf-8',
           });
-          FileSaver.saveAs(blob, 'StackEdit workspace.json');
+          FileSaver.saveAs(blob, 'PawnMD workspace.json');
         },
       );
     },
