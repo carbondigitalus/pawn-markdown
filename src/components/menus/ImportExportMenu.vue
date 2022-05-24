@@ -56,21 +56,22 @@ import exportSvc from '../../services/exportSvc';
 import badgeSvc from '../../services/badgeSvc';
 
 const turndownService = new TurndownService(store.getters['data/computedSettings'].turndown);
-
-const readFile = file => new Promise((resolve) => {
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target.result;
-      if (content.match(/\uFFFD/)) {
-        store.dispatch('notification/error', 'File is not readable.');
-      } else {
-        resolve(content);
-      }
-    };
-    reader.readAsText(file);
-  }
-});
+// eslint-disable-next-line arrow-parens
+const readFile = (file) =>
+  new Promise((resolve) => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target.result;
+        if (content.match(/\uFFFD/)) {
+          store.dispatch('notification/error', 'File is not readable.');
+        } else {
+          resolve(content);
+        }
+      };
+      reader.readAsText(file);
+    }
+  });
 
 export default {
   components: {
@@ -91,8 +92,7 @@ export default {
     async onImportHtml(evt) {
       const file = evt.target.files[0];
       const content = await readFile(file);
-      const sanitizedContent = htmlSanitizer.sanitizeHtml(content)
-        .replace(/&#160;/g, ' '); // Replace non-breaking spaces with classic spaces
+      const sanitizedContent = htmlSanitizer.sanitizeHtml(content).replace(/&#160;/g, ' '); // Replace non-breaking spaces with classic spaces
       const item = await workspaceSvc.createFile({
         ...Provider.parseContent(turndownService.turndown(sanitizedContent)),
         name: file.name,
@@ -105,22 +105,30 @@ export default {
       try {
         await exportSvc.exportToDisk(currentFile.id, 'md');
         badgeSvc.addBadge('exportMarkdown');
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
     async exportHtml() {
       try {
         await store.dispatch('modal/open', 'htmlExport');
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
     async exportPdf() {
       try {
         await store.dispatch('modal/open', 'pdfExport');
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
     async exportPandoc() {
       try {
         await store.dispatch('modal/open', 'pandocExport');
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
   },
 };
