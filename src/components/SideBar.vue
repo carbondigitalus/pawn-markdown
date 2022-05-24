@@ -84,9 +84,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('data', [
-      'toggleSideBar',
-    ]),
+    ...mapActions('data', ['toggleSideBar']),
     ...mapActions('data', {
       setPanel: 'setSideBarPanel',
     }),
