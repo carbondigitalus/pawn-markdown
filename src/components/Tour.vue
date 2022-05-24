@@ -53,13 +53,7 @@
 import Vue from 'vue';
 import store from '../store';
 
-const steps = [
-  'welcome',
-  'editor',
-  'explorer',
-  'menu',
-  'end',
-];
+const steps = ['welcome', 'editor', 'explorer', 'menu', 'end'];
 
 export default {
   data: () => ({
@@ -81,8 +75,10 @@ export default {
         const anchorSteps = (anchorElt.getAttribute('tour-step-anchor') || '').split(',');
         anchorSteps.forEach((step) => {
           const style = {
-            top: `${anchorRect.top + (anchorRect.height / 2)}px`,
-            left: `${anchorRect.left + (anchorRect.width / 2)}px`,
+            // eslint-disable-next-line no-mixed-operators
+            top: `${anchorRect.top + anchorRect.height / 2}px`,
+            // eslint-disable-next-line no-mixed-operators
+            left: `${anchorRect.left + anchorRect.width / 2}px`,
           };
           switch (step) {
             case 'welcome':
@@ -116,11 +112,7 @@ export default {
     },
   },
   mounted() {
-    this.$watch(
-      () => store.getters['layout/styles'],
-      () => this.updatePositions(),
-      { immediate: true },
-    );
+    this.$watch(() => store.getters['layout/styles'], () => this.updatePositions(), { immediate: true });
   },
 };
 </script>
