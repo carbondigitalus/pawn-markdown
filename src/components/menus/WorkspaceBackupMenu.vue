@@ -49,15 +49,19 @@ export default {
     },
     exportWorkspace() {
       const allItemsById = {};
-      localDbSvc.getWorkspaceItems(this.workspaceId, (item) => {
-        allItemsById[item.id] = item;
-      }, () => {
-        const backup = JSON.stringify(allItemsById);
-        const blob = new Blob([backup], {
-          type: 'text/plain;charset=utf-8',
-        });
-        FileSaver.saveAs(blob, 'StackEdit workspace.json');
-      });
+      localDbSvc.getWorkspaceItems(
+        this.workspaceId,
+        (item) => {
+          allItemsById[item.id] = item;
+        },
+        () => {
+          const backup = JSON.stringify(allItemsById);
+          const blob = new Blob([backup], {
+            type: 'text/plain;charset=utf-8',
+          });
+          FileSaver.saveAs(blob, 'StackEdit workspace.json');
+        },
+      );
     },
   },
 };
