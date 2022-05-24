@@ -110,29 +110,29 @@ import syncSvc from '../../services/syncSvc';
 import store from '../../store';
 import badgeSvc from '../../services/badgeSvc';
 
-const tokensToArray = (tokens, filter = () => true) => Object.values(tokens)
-  .filter(token => filter(token))
-  .sort((token1, token2) => token1.name.localeCompare(token2.name));
+const tokensToArray = (tokens, filter = () => true) =>
+  Object.values(tokens)
+    // eslint-disable-next-line arrow-parens
+    .filter((token) => filter(token))
+    .sort((token1, token2) => token1.name.localeCompare(token2.name));
 
-const openSyncModal = (token, type) => store.dispatch('modal/open', {
-  type,
-  token,
-}).then(syncLocation => syncSvc.createSyncLocation(syncLocation));
+const openSyncModal = (token, type) =>
+  store
+    .dispatch('modal/open', {
+      type,
+      token,
+    })
+    // eslint-disable-next-line arrow-parens
+    .then((syncLocation) => syncSvc.createSyncLocation(syncLocation));
 
 export default {
   components: {
     MenuEntry,
   },
   computed: {
-    ...mapState('queue', [
-      'isSyncRequested',
-    ]),
-    ...mapGetters('workspace', [
-      'syncToken',
-    ]),
-    ...mapGetters('file', [
-      'isCurrentTemp',
-    ]),
+    ...mapState('queue', ['isSyncRequested']),
+    ...mapGetters('workspace', ['syncToken']),
+    ...mapGetters('file', ['isCurrentTemp']),
     ...mapGetters('syncLocation', {
       syncLocations: 'currentWithWorkspaceSyncLocation',
     }),
@@ -152,12 +152,12 @@ export default {
       return tokensToArray(store.getters['data/gitlabTokensBySub']);
     },
     googleDriveTokens() {
-      return tokensToArray(store.getters['data/googleTokensBySub'], token => token.isDrive);
+      // eslint-disable-next-line arrow-parens
+      return tokensToArray(store.getters['data/googleTokensBySub'], (token) => token.isDrive);
     },
     noToken() {
-      return !this.googleDriveTokens.length
-        && !this.dropboxTokens.length
-        && !this.githubTokens.length;
+      // eslint-disable-next-line max-len
+      return !this.googleDriveTokens.length && !this.dropboxTokens.length && !this.githubTokens.length;
     },
   },
   methods: {
@@ -169,63 +169,71 @@ export default {
     async manageSync() {
       try {
         await store.dispatch('modal/open', 'syncManagement');
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addDropboxAccount() {
       try {
         await store.dispatch('modal/open', { type: 'dropboxAccount' });
         await dropboxHelper.addAccount(!store.getters['data/localSettings'].dropboxRestrictedAccess);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addGithubAccount() {
       try {
         await store.dispatch('modal/open', { type: 'githubAccount' });
         await githubHelper.addAccount(store.getters['data/localSettings'].githubRepoFullAccess);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addGitlabAccount() {
       try {
         const { serverUrl, applicationId } = await store.dispatch('modal/open', { type: 'gitlabAccount' });
         await gitlabHelper.addAccount(serverUrl, applicationId);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addGoogleDriveAccount() {
       try {
         await store.dispatch('modal/open', { type: 'googleDriveAccount' });
         await googleHelper.addDriveAccount(!store.getters['data/localSettings'].googleDriveRestrictedAccess);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async openDropbox(token) {
       const paths = await dropboxHelper.openChooser(token);
-      store.dispatch(
-        'queue/enqueue',
-        async () => {
-          await dropboxProvider.openFiles(token, paths);
-          badgeSvc.addBadge('openFromDropbox');
-        },
-      );
+      store.dispatch('queue/enqueue', async () => {
+        await dropboxProvider.openFiles(token, paths);
+        badgeSvc.addBadge('openFromDropbox');
+      });
     },
     async saveDropbox(token) {
       try {
         await openSyncModal(token, 'dropboxSave');
         badgeSvc.addBadge('saveOnDropbox');
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async openGoogleDrive(token) {
       const files = await googleHelper.openPicker(token, 'doc');
-      store.dispatch(
-        'queue/enqueue',
-        async () => {
-          await googleDriveProvider.openFiles(token, files);
-          badgeSvc.addBadge('openFromGoogleDrive');
-        },
-      );
+      store.dispatch('queue/enqueue', async () => {
+        await googleDriveProvider.openFiles(token, files);
+        badgeSvc.addBadge('openFromGoogleDrive');
+      });
     },
     async saveGoogleDrive(token) {
       try {
         await openSyncModal(token, 'googleDriveSave');
         badgeSvc.addBadge('saveOnGoogleDrive');
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async openGithub(token) {
       try {
@@ -233,26 +241,29 @@ export default {
           type: 'githubOpen',
           token,
         });
-        store.dispatch(
-          'queue/enqueue',
-          async () => {
-            await githubProvider.openFile(token, syncLocation);
-            badgeSvc.addBadge('openFromGithub');
-          },
-        );
-      } catch (e) { /* cancel */ }
+        store.dispatch('queue/enqueue', async () => {
+          await githubProvider.openFile(token, syncLocation);
+          badgeSvc.addBadge('openFromGithub');
+        });
+      } catch (e) {
+        /* cancel */
+      }
     },
     async saveGithub(token) {
       try {
         await openSyncModal(token, 'githubSave');
         badgeSvc.addBadge('saveOnGithub');
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async saveGist(token) {
       try {
         await openSyncModal(token, 'gistSync');
         badgeSvc.addBadge('saveOnGist');
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async openGitlab(token) {
       try {
@@ -260,20 +271,21 @@ export default {
           type: 'gitlabOpen',
           token,
         });
-        store.dispatch(
-          'queue/enqueue',
-          async () => {
-            await gitlabProvider.openFile(token, syncLocation);
-            badgeSvc.addBadge('openFromGitlab');
-          },
-        );
-      } catch (e) { /* cancel */ }
+        store.dispatch('queue/enqueue', async () => {
+          await gitlabProvider.openFile(token, syncLocation);
+          badgeSvc.addBadge('openFromGitlab');
+        });
+      } catch (e) {
+        /* cancel */
+      }
     },
     async saveGitlab(token) {
       try {
         await openSyncModal(token, 'gitlabSave');
         badgeSvc.addBadge('saveOnGitlab');
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
   },
 };
