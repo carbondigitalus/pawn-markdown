@@ -1,8 +1,7 @@
 <template>
   <div class="modal" v-if="config" @keydown.esc.stop="onEscape" @keydown.tab="onTab" @focusin="onFocusInOut" @focusout="onFocusInOut">
     <div class="modal__sponsor-banner" v-if="!isSponsor">
-      StackEdit is <a class="not-tabbable" target="_blank" href="https://github.com/benweet/stackedit/">open source</a>, please consider
-      <a class="not-tabbable" href="javascript:void(0)" @click="sponsor">sponsoring</a> for just $5.
+      Pawn Markdown is <a class="not-tabbable" target="_blank" href="https://github.com/fortembr/pawn-markdown/">open source</a>.
     </div>
     <component v-if="currentModalComponent" :is="currentModalComponent"></component>
     <modal-inner v-else aria-label="Dialog">
@@ -69,9 +68,15 @@ import ZendeskPublishModal from './modals/providers/ZendeskPublishModal';
 import CouchdbWorkspaceModal from './modals/providers/CouchdbWorkspaceModal';
 import CouchdbCredentialsModal from './modals/providers/CouchdbCredentialsModal';
 
-const getTabbables = container => container.querySelectorAll('a[href], button, .textfield, input[type=checkbox]')
+const getTabbables = (container) => {
+  container.querySelectorAll('a[href], button, .textfield, input[type=checkbox]');
   // Filter enabled and visible element
-  .cl_filter(el => !el.disabled && el.offsetParent !== null && !el.classList.contains('not-tabbable'));
+  // .cl_filter((el) => {
+  //   !el.disabled &&
+  //     el.offsetParent !== null &&
+  //     !el.classList.contains('not-tabbable');
+  // });
+};
 
 export default {
   components: {
@@ -121,12 +126,8 @@ export default {
     CouchdbCredentialsModal,
   },
   computed: {
-    ...mapGetters([
-      'isSponsor',
-    ]),
-    ...mapGetters('modal', [
-      'config',
-    ]),
+    ...mapGetters(['isSponsor']),
+    ...mapGetters('modal', ['config']),
     currentModalComponent() {
       if (this.config.type) {
         let componentName = this.config.type[0].toUpperCase();
@@ -154,7 +155,9 @@ export default {
         if (!store.getters.isSponsor) {
           await store.dispatch('modal/open', 'sponsor');
         }
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     onEscape() {
       this.config.reject();
@@ -176,12 +179,11 @@ export default {
       const { parentNode } = evt.target;
       if (parentNode && parentNode.parentNode) {
         // Focus effect
-        if (parentNode.classList.contains('form-entry__field')
-          && parentNode.parentNode.classList.contains('form-entry')) {
-          parentNode.parentNode.classList.toggle(
-            'form-entry--focused',
-            evt.type === 'focusin',
-          );
+        if (
+          parentNode.classList.contains('form-entry__field') &&
+          parentNode.parentNode.classList.contains('form-entry')
+        ) {
+          parentNode.parentNode.classList.toggle('form-entry--focused', evt.type === 'focusin');
         }
       }
     },
@@ -252,7 +254,16 @@ export default {
     left: 0;
     height: $border-radius-base;
     width: 100%;
-    background-image: linear-gradient(to left, #ffd700, #ffd700 23%, #a5c700 27%, #a5c700 48%, #ff8a00 52%, #ff8a00 73%, #66aefd 77%);
+    background-image: linear-gradient(
+      to left,
+      #ffd700,
+      #ffd700 23%,
+      #a5c700 27%,
+      #a5c700 48%,
+      #ff8a00 52%,
+      #ff8a00 73%,
+      #66aefd 77%
+    );
   }
 
   &::after {
@@ -262,7 +273,16 @@ export default {
     left: 0;
     height: $border-radius-base;
     width: 100%;
-    background-image: linear-gradient(to right, #ffd700, #ffd700 23%, #a5c700 27%, #a5c700 48%, #ff8a00 52%, #ff8a00 73%, #66aefd 77%);
+    background-image: linear-gradient(
+      to right,
+      #ffd700,
+      #ffd700 23%,
+      #a5c700 27%,
+      #a5c700 48%,
+      #ff8a00 52%,
+      #ff8a00 73%,
+      #66aefd 77%
+    );
   }
 }
 
