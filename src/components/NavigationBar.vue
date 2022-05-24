@@ -66,13 +66,18 @@ const getShortcut = (method) => {
   let result = '';
   Object.entries(store.getters['data/computedSettings'].shortcuts).some(([keys, shortcut]) => {
     if (`${shortcut.method || shortcut}` === method) {
-      result = keys.split('+').map(key => key.toLowerCase()).map((key) => {
-        if (key === 'mod') {
-          return mod;
-        }
-        // Capitalize
-        return key && `${key[0].toUpperCase()}${key.slice(1)}`;
-      }).join('+');
+      result = keys
+        .split('+')
+        // eslint-disable-next-line arrow-parens
+        .map((key) => key.toLowerCase())
+        .map((key) => {
+          if (key === 'mod') {
+            return mod;
+          }
+          // Capitalize
+          return key && `${key[0].toUpperCase()}${key.slice(1)}`;
+        })
+        .join('+');
     }
     return result;
   });
@@ -87,25 +92,11 @@ export default {
     titleHover: false,
   }),
   computed: {
-    ...mapState([
-      'light',
-      'offline',
-    ]),
-    ...mapState('queue', [
-      'isSyncRequested',
-      'isPublishRequested',
-      'currentLocation',
-    ]),
-    ...mapState('layout', [
-      'canUndo',
-      'canRedo',
-    ]),
-    ...mapState('content', [
-      'revisionContent',
-    ]),
-    ...mapGetters('layout', [
-      'styles',
-    ]),
+    ...mapState(['light', 'offline']),
+    ...mapState('queue', ['isSyncRequested', 'isPublishRequested', 'currentLocation']),
+    ...mapState('layout', ['canUndo', 'canRedo']),
+    ...mapState('content', ['revisionContent']),
+    ...mapGetters('layout', ['styles']),
     ...mapGetters('syncLocation', {
       syncLocations: 'current',
     }),
@@ -113,15 +104,15 @@ export default {
       publishLocations: 'current',
     }),
     pagedownButtons() {
-      return pagedownButtons.map(button => ({
+      // eslint-disable-next-line arrow-parens
+      return pagedownButtons.map((button) => ({
         ...button,
         titleWithShortcut: `${button.title}${getShortcut(button.method)}`,
         iconClass: `icon-${button.icon}`,
       }));
     },
     isSyncPossible() {
-      return store.getters['workspace/syncToken'] ||
-        store.getters['syncLocation/current'].length;
+      return store.getters['workspace/syncToken'] || store.getters['syncLocation/current'].length;
     },
     showSpinner() {
       return !store.state.queue.isEmpty;
@@ -139,13 +130,15 @@ export default {
       if (this.titleInputElt) {
         if (result) {
           const scrollLeft = this.titleInputElt.scrollWidth - this.titleInputElt.offsetWidth;
-          animationSvc.animate(this.titleInputElt)
+          animationSvc
+            .animate(this.titleInputElt)
             .scrollLeft(scrollLeft)
             .duration(scrollLeft * 10)
             .easing('inOut')
             .start();
         } else {
-          animationSvc.animate(this.titleInputElt)
+          animationSvc
+            .animate(this.titleInputElt)
             .scrollLeft(0)
             .start();
         }
@@ -154,23 +147,13 @@ export default {
     },
     editCancelTrigger() {
       const current = store.getters['file/current'];
-      return utils.serializeObject([
-        current.id,
-        current.name,
-      ]);
+      return utils.serializeObject([current.id, current.name]);
     },
   },
   methods: {
-    ...mapMutations('content', [
-      'setRevisionContent',
-    ]),
-    ...mapActions('content', [
-      'restoreRevision',
-    ]),
-    ...mapActions('data', [
-      'toggleExplorer',
-      'toggleSideBar',
-    ]),
+    ...mapMutations('content', ['setRevisionContent']),
+    ...mapActions('content', ['restoreRevision']),
+    ...mapActions('data', ['toggleExplorer', 'toggleSideBar']),
     undo() {
       return editorSvc.clEditor.undoMgr.undo();
     },
@@ -488,7 +471,7 @@ $t: 3000ms;
 
   &::before,
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     display: block;
     width: $b;
