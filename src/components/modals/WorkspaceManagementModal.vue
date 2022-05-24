@@ -81,19 +81,11 @@ export default {
     availableOffline: {},
   }),
   computed: {
-    ...mapGetters('modal', [
-      'config',
-    ]),
-    ...mapGetters('workspace', [
-      'workspacesById',
-      'mainWorkspace',
-      'currentWorkspace',
-    ]),
+    ...mapGetters('modal', ['config']),
+    ...mapGetters('workspace', ['workspacesById', 'mainWorkspace', 'currentWorkspace']),
   },
   methods: {
-    ...mapActions('notification', [
-      'info',
-    ]),
+    ...mapActions('notification', ['info']),
     edit(id) {
       this.editedId = id;
       this.editingName = this.workspacesById[id].name;
@@ -125,7 +117,9 @@ export default {
           await store.dispatch('modal/open', 'removeWorkspace');
           workspaceSvc.removeWorkspace(id);
           badgeSvc.addBadge('removeWorkspace');
-        } catch (e) { /* Cancel */ }
+        } catch (e) {
+          /* Cancel */
+        }
       }
     },
   },
