@@ -30,12 +30,8 @@ import { mapState, mapGetters, mapActions } from 'vuex';
 
 export default {
   computed: {
-    ...mapState([
-      'light',
-    ]),
-    ...mapGetters('data', [
-      'layoutSettings',
-    ]),
+    ...mapState(['light']),
+    ...mapGetters('data', ['layoutSettings']),
   },
   methods: mapActions('data', [
     'toggleNavigationBar',
