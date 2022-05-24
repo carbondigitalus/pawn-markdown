@@ -47,7 +47,7 @@ body {
   outline: none;
 }
 
-input[type=checkbox] {
+input[type="checkbox"] {
   outline: $limegreen auto 5px;
 }
 
@@ -305,20 +305,36 @@ textarea {
 
 .discussion-editor-highlighting,
 .discussion-preview-highlighting {
-  background-color: mix($editor-background-light, $selection-highlighting-color, 70%);
+  background-color: mix(
+    $editor-background-light,
+    $selection-highlighting-color,
+    70%
+  );
   padding: 0.25em 0;
 
   .app--dark & {
-    background-color: mix($editor-background-dark, $selection-highlighting-color, 70%);
+    background-color: mix(
+      $editor-background-dark,
+      $selection-highlighting-color,
+      70%
+    );
   }
 }
 
 .discussion-editor-highlighting--hover,
 .discussion-preview-highlighting--hover {
-  background-color: mix($editor-background-light, $selection-highlighting-color, 50%);
+  background-color: mix(
+    $editor-background-light,
+    $selection-highlighting-color,
+    50%
+  );
 
   .app--dark & {
-    background-color: mix($editor-background-dark, $selection-highlighting-color, 50%);
+    background-color: mix(
+      $editor-background-dark,
+      $selection-highlighting-color,
+      50%
+    );
   }
 
   * {
@@ -328,10 +344,18 @@ textarea {
 
 .discussion-editor-highlighting--selected,
 .discussion-preview-highlighting--selected {
-  background-color: mix($editor-background-light, $selection-highlighting-color, 20%);
+  background-color: mix(
+    $editor-background-light,
+    $selection-highlighting-color,
+    20%
+  );
 
   .app--dark & {
-    background-color: mix($editor-background-dark, $selection-highlighting-color, 20%);
+    background-color: mix(
+      $editor-background-dark,
+      $selection-highlighting-color,
+      20%
+    );
   }
 
   * {
@@ -374,8 +398,21 @@ textarea {
   body > .app > .layout > .layout__panel,
   body > .app > .layout > .layout__panel > .layout__panel,
   body > .app > .layout > .layout__panel > .layout__panel > .layout__panel,
-  body > .app > .layout > .layout__panel > .layout__panel > .layout__panel > .layout__panel--preview,
-  body > .app > .layout > .layout__panel > .layout__panel > .layout__panel > .layout__panel--preview div {
+  body
+    > .app
+    > .layout
+    > .layout__panel
+    > .layout__panel
+    > .layout__panel
+    > .layout__panel--preview,
+  body
+    > .app
+    > .layout
+    > .layout__panel
+    > .layout__panel
+    > .layout__panel
+    > .layout__panel--preview
+    div {
     background-color: transparent !important;
     display: block !important;
     height: auto !important;
