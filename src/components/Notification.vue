@@ -23,9 +23,7 @@
 import { mapState } from 'vuex';
 
 export default {
-  computed: mapState('notification', [
-    'items',
-  ]),
+  computed: mapState('notification', ['items']),
 };
 </script>
 
