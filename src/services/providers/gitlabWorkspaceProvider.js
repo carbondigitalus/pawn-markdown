@@ -6,8 +6,7 @@ import userSvc from '../userSvc';
 import gitWorkspaceSvc from '../gitWorkspaceSvc';
 import badgeSvc from '../badgeSvc';
 
-const getAbsolutePath = ({ id }) =>
-  `${store.getters['workspace/currentWorkspace'].path || ''}${id}`;
+const getAbsolutePath = ({ id }) => `${store.getters['workspace/currentWorkspace'].path || ''}${id}`;
 
 export default new Provider({
   id: 'gitlabWorkspace',
@@ -15,12 +14,7 @@ export default new Provider({
   getToken() {
     return store.getters['workspace/syncToken'];
   },
-  getWorkspaceParams({
-    serverUrl,
-    projectPath,
-    branch,
-    path,
-  }) {
+  getWorkspaceParams({ serverUrl, projectPath, branch, path }) {
     return {
       providerId: this.id,
       serverUrl,
@@ -29,18 +23,15 @@ export default new Provider({
       path,
     };
   },
-  getWorkspaceLocationUrl({
-    serverUrl,
-    projectPath,
-    branch,
-    path,
-  }) {
+  getWorkspaceLocationUrl({ serverUrl, projectPath, branch, path }) {
     return `${serverUrl}/${projectPath}/blob/${encodeURIComponent(branch)}/${utils.encodeUrlPath(path)}`;
   },
   getSyncDataUrl({ id }) {
     const { projectPath, branch } = store.getters['workspace/currentWorkspace'];
     const { serverUrl } = this.getToken();
-    return `${serverUrl}/${projectPath}/blob/${encodeURIComponent(branch)}/${utils.encodeUrlPath(getAbsolutePath({ id }))}`;
+    return `${serverUrl}/${projectPath}/blob/${encodeURIComponent(branch)}/${utils.encodeUrlPath(
+      getAbsolutePath({ id }),
+    )}`;
   },
   getSyncDataDescription({ id }) {
     return getAbsolutePath({ id });
@@ -86,8 +77,8 @@ export default new Provider({
       const projectId = await gitlabHelper.getProjectId(token, workspaceParams);
       const pathEntries = (path || '').split('/');
       const projectPathEntries = (projectPath || '').split('/');
-      const name = pathEntries[pathEntries.length - 2] // path ends with `/`
-        || projectPathEntries[projectPathEntries.length - 1];
+      const name =
+        pathEntries[pathEntries.length - 2] || projectPathEntries[projectPathEntries.length - 1]; // path ends with `/`
       store.dispatch('workspace/patchWorkspacesById', {
         [workspaceId]: {
           ...workspaceParams,
@@ -109,10 +100,12 @@ export default new Provider({
     });
   },
   prepareChanges(tree) {
-    return gitWorkspaceSvc.makeChanges(tree.map(entry => ({
-      ...entry,
-      sha: entry.id,
-    })));
+    return gitWorkspaceSvc.makeChanges(
+      tree.map((entry) => ({
+        ...entry,
+        sha: entry.id,
+      })),
+    );
   },
   async saveWorkspaceItem({ item }) {
     const syncData = {
@@ -150,12 +143,7 @@ export default new Provider({
       });
     }
   },
-  async downloadWorkspaceContent({
-    token,
-    contentId,
-    contentSyncData,
-    fileSyncData,
-  }) {
+  async downloadWorkspaceContent({ token, contentId, contentSyncData, fileSyncData }) {
     const { sha, data } = await gitlabHelper.downloadFile({
       ...store.getters['workspace/currentWorkspace'],
       token,
@@ -271,12 +259,7 @@ export default new Provider({
     // Revisions are already loaded
     return false;
   },
-  async getFileRevisionContent({
-    token,
-    contentId,
-    fileSyncDataId,
-    revisionId,
-  }) {
+  async getFileRevisionContent({ token, contentId, fileSyncDataId, revisionId }) {
     const { data } = await gitlabHelper.downloadFile({
       ...store.getters['workspace/currentWorkspace'],
       token,
