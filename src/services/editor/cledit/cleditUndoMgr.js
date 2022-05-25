@@ -47,9 +47,11 @@ function UndoMgr(editor) {
 
     this.isBufferState = () => {
       currentTime = Date.now();
-      return this.currentMode !== 'single' &&
+      return (
+        this.currentMode !== 'single' &&
         this.currentMode === lastMode &&
-        currentTime - lastTime < self.options.bufferStateUntilIdle;
+        currentTime - lastTime < self.options.bufferStateUntilIdle
+      );
     };
 
     this.setDefaultMode = (mode) => {
@@ -89,7 +91,7 @@ function UndoMgr(editor) {
 
   this.addDiffs = (oldContent, newContent, diffs) => {
     const patches = this.options.patchHandler.makePatches(oldContent, newContent, diffs);
-    patches.cl_each(patch => currentPatches.push(patch));
+    patches.cl_each((patch) => currentPatches.push(patch));
   };
 
   function saveCurrentPatches() {
