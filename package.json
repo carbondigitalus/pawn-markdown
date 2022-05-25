@@ -10,7 +10,7 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "gulp build-prism",
-    "start": "node build/dev-server.js",
+    "start:dev": "node build/dev-server.js",
     "build": "node build/build.js && npm run build-style",
     "build-style": "webpack --config build/webpack.style.conf.js",
     "lint": "eslint --ext .js,.vue src server",
