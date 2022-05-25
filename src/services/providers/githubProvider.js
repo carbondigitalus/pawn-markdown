@@ -13,13 +13,10 @@ export default new Provider({
   getToken({ sub }) {
     return store.getters['data/githubTokensBySub'][sub];
   },
-  getLocationUrl({
-    owner,
-    repo,
-    branch,
-    path,
-  }) {
-    return `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/tree/${encodeURIComponent(branch)}/${utils.encodeUrlPath(path)}`;
+  getLocationUrl({ owner, repo, branch, path }) {
+    return `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/tree/${encodeURIComponent(
+      branch,
+    )}/${utils.encodeUrlPath(path)}`;
   },
   getLocationDescription({ path }) {
     return path;
@@ -90,14 +87,17 @@ export default new Provider({
       if (dotPos > 0 && slashPos < name.length) {
         name = name.slice(0, dotPos);
       }
-      const item = await workspaceSvc.createFile({
-        name,
-        parentId: store.getters['file/current'].parentId,
-        text: content.text,
-        properties: content.properties,
-        discussions: content.discussions,
-        comments: content.comments,
-      }, true);
+      const item = await workspaceSvc.createFile(
+        {
+          name,
+          parentId: store.getters['file/current'].parentId,
+          text: content.text,
+          properties: content.properties,
+          discussions: content.discussions,
+          comments: content.comments,
+        },
+        true,
+      );
       store.commit('file/setCurrentId', item.id);
       workspaceSvc.addSyncLocation({
         ...syncLocation,
@@ -122,12 +122,7 @@ export default new Provider({
       token,
     });
 
-    return entries.map(({
-      author,
-      committer,
-      commit,
-      sha,
-    }) => {
+    return entries.map(({ author, committer, commit, sha }) => {
       let user;
       if (author && author.login) {
         user = author;
@@ -136,8 +131,7 @@ export default new Provider({
       }
       const sub = `${githubHelper.subPrefix}:${user.id}`;
       userSvc.addUserInfo({ id: sub, name: user.login, imageUrl: user.avatar_url });
-      const date = (commit.author && commit.author.date)
-        || (commit.committer && commit.committer.date);
+      const date = (commit.author && commit.author.date) || (commit.committer && commit.committer.date);
       return {
         id: sha,
         sub,
@@ -149,12 +143,7 @@ export default new Provider({
     // Revision are already loaded
     return false;
   },
-  async getFileRevisionContent({
-    token,
-    contentId,
-    syncLocation,
-    revisionId,
-  }) {
+  async getFileRevisionContent({ token, contentId, syncLocation, revisionId }) {
     const { data } = await githubHelper.downloadFile({
       ...syncLocation,
       token,
