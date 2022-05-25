@@ -3,7 +3,7 @@ import utils from '../services/utils';
 
 export default (empty, simpleHash = false) => {
   // Use Date.now() as a simple hash function, which is ok for not-synced types
-  const hashFunc = simpleHash ? Date.now : item => utils.getItemHash(item);
+  const hashFunc = simpleHash ? Date.now : (item) => utils.getItemHash(item);
 
   return {
     namespaced: true,
