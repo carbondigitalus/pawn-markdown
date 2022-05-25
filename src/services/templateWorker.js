@@ -9,14 +9,16 @@ Handlebars.registerHelper('tocToHtml', (toc, depth = 6) => {
     if (!arr || !arr.length || arr[0].level > depth) {
       return '';
     }
-    const ulHtml = arr.map((item) => {
-      let result = '<li>';
-      if (item.anchor && item.title) {
-        result += `<a href="#${item.anchor}">${item.title}</a>`;
-      }
-      result += arrayToHtml(item.children);
-      return `${result}</li>`;
-    }).join('\n');
+    const ulHtml = arr
+      .map((item) => {
+        let result = '<li>';
+        if (item.anchor && item.title) {
+          result += `<a href="#${item.anchor}">${item.title}</a>`;
+        }
+        result += arrayToHtml(item.children);
+        return `${result}</li>`;
+      })
+      .join('\n');
     return `\n<ul>\n${ulHtml}\n</ul>\n`;
   }
   return new Handlebars.SafeString(arrayToHtml(toc));
@@ -64,7 +66,8 @@ const whiteList = {
 /* eslint-disable no-restricted-globals */
 let global = self;
 while (global !== Object.prototype) {
-  Object.getOwnPropertyNames(global).forEach((prop) => { // eslint-disable-line no-loop-func
+  Object.getOwnPropertyNames(global).forEach((prop) => {
+    // eslint-disable-line no-loop-func
     if (!Object.prototype.hasOwnProperty.call(whiteList, prop)) {
       try {
         Object.defineProperty(global, prop, {
