@@ -2,15 +2,16 @@ import networkSvc from '../../networkSvc';
 import store from '../../../store';
 import badgeSvc from '../../badgeSvc';
 
-const request = (token, options) => networkSvc.request({
-  ...options,
-  headers: {
-    ...options.headers || {},
-    Authorization: `Bearer ${token.accessToken}`,
-  },
-})
-  .then(res => res.body);
-
+const request = (token, options) =>
+  networkSvc
+    .request({
+      ...options,
+      headers: {
+        ...(options.headers || {}),
+        Authorization: `Bearer ${token.accessToken}`,
+      },
+    })
+    .then((res) => res.body);
 
 export default {
   /**
@@ -29,9 +30,12 @@ export default {
     );
 
     // Call the user info endpoint
-    const { user } = await request({ accessToken }, {
-      url: `https://${subdomain}.zendesk.com/api/v2/users/me.json`,
-    });
+    const { user } = await request(
+      { accessToken },
+      {
+        url: `https://${subdomain}.zendesk.com/api/v2/users/me.json`,
+      },
+    );
     const uniqueSub = `${subdomain}/${user.id}`;
 
     // Check the returned sub consistency
@@ -60,16 +64,7 @@ export default {
   /**
    * https://developer.zendesk.com/rest_api/docs/help_center/articles
    */
-  async uploadArticle({
-    token,
-    sectionId,
-    articleId,
-    title,
-    content,
-    labels,
-    locale,
-    isDraft,
-  }) {
+  async uploadArticle({ token, sectionId, articleId, title, content, labels, locale, isDraft }) {
     const article = {
       title,
       body: content,
@@ -81,7 +76,9 @@ export default {
       // Update article
       await request(token, {
         method: 'PUT',
-        url: `https://${token.subdomain}.zendesk.com/api/v2/help_center/articles/${articleId}/translations/${locale}.json`,
+        url: `https://${
+          token.subdomain
+        }.zendesk.com/api/v2/help_center/articles/${articleId}/translations/${locale}.json`,
         body: { translation: article },
       });
 
