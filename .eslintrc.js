@@ -2,49 +2,49 @@
 
 module.exports = {
   root: true,
-  parser: "babel-eslint",
+  parser: 'babel-eslint',
   parserOptions: {
-    sourceType: "module"
+    sourceType: 'module',
   },
   env: {
-    browser: true
+    browser: true,
   },
-  extends: "airbnb-base",
+  extends: 'airbnb-base',
   // required to lint *.vue files
-  plugins: ["html"],
+  plugins: ['html'],
   globals: {
     NODE_ENV: false,
-    VERSION: false
+    VERSION: false,
   },
   // check if imports actually resolve
   settings: {
-    "import/resolver": {
+    'import/resolver': {
       webpack: {
-        config: "build/webpack.base.conf.js"
-      }
-    }
+        config: 'build/webpack.base.conf.js',
+      },
+    },
   },
   // add your custom rules here
   rules: {
-    "no-param-reassign": [2, { props: false }],
+    'no-param-reassign': [2, { props: false }],
     // don't require .vue extension when importing
-    "import/extensions": [
-      "error",
-      "always",
+    'import/extensions': [
+      'error',
+      'always',
       {
-        js: "never",
-        vue: "never"
-      }
+        js: 'never',
+        vue: 'never',
+      },
     ],
     // allow optionalDependencies
-    "import/no-extraneous-dependencies": [
-      "error",
+    'import/no-extraneous-dependencies': [
+      'error',
       {
-        optionalDependencies: ["test/unit/index.js"]
-      }
+        optionalDependencies: ['test/unit/index.js'],
+      },
     ],
     // allow debugger during development
-    "no-debugger": process.env.NODE_ENV === "production" ? 2 : 0,
-    "vue/html-quotes": ["error", "single", { avoidEscape: false }]
-  }
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
+    'vue/html-quotes': ['error', 'single', { avoidEscape: true }],
+  },
 };
