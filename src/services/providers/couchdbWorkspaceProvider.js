@@ -199,7 +199,8 @@ export default new Provider({
   async listFileRevisions({ token, contentSyncDataId }) {
     const body = await couchdbHelper.retrieveDocumentWithRevisions(token, contentSyncDataId);
     const revisions = [];
-    body._revs_info.forEach((revInfo, idx) => { // eslint-disable-line no-underscore-dangle
+    body._revs_info.forEach((revInfo, idx) => {
+      // eslint-disable-line no-underscore-dangle
       if (revInfo.status === 'available') {
         revisions.push({
           id: revInfo.rev,
@@ -222,8 +223,7 @@ export default new Provider({
     return true;
   },
   async getFileRevisionContent({ token, contentSyncDataId, revisionId }) {
-    const body = await couchdbHelper
-      .retrieveDocumentWithAttachments(token, contentSyncDataId, revisionId);
+    const body = await couchdbHelper.retrieveDocumentWithAttachments(token, contentSyncDataId, revisionId);
     return Provider.parseContent(body.attachments.data, body.item.id);
   },
 });
