@@ -2,9 +2,8 @@ import utils from '../services/utils';
 import googleHelper from '../services/providers/helpers/googleHelper';
 import syncSvc from '../services/syncSvc';
 
-const idShifter = offset => (state, getters) => {
-  const ids = Object.keys(getters.currentFileDiscussions)
-    .filter(id => id !== state.newDiscussionId);
+const idShifter = (offset) => (state, getters) => {
+  const ids = Object.keys(getters.currentFileDiscussions).filter((id) => id !== state.newDiscussionId);
   const idx = ids.indexOf(state.currentDiscussionId) + offset + ids.length;
   return ids[idx % ids.length];
 };
@@ -87,8 +86,7 @@ export default {
       }
       const { discussions } = rootGetters['content/current'];
       Object.entries(currentFileDiscussionLastComments)
-        .sort(([, lastComment1], [, lastComment2]) =>
-          lastComment1.created - lastComment2.created)
+        .sort(([, lastComment1], [, lastComment2]) => lastComment1.created - lastComment2.created)
         .forEach(([discussionId]) => {
           currentFileDiscussions[discussionId] = discussions[discussionId];
         });
@@ -98,20 +96,13 @@ export default {
       currentFileDiscussions[currentDiscussionId],
     previousDiscussionId: idShifter(-1),
     nextDiscussionId: idShifter(1),
-    currentDiscussionComments: (
-      { currentDiscussionId },
-      { currentDiscussion },
-      rootState,
-      rootGetters,
-    ) => {
+    currentDiscussionComments: ({ currentDiscussionId }, { currentDiscussion }, rootState, rootGetters) => {
       const comments = {};
       if (currentDiscussion) {
         const contentComments = rootGetters['content/current'].comments;
         Object.entries(contentComments)
-          .filter(([, comment]) =>
-            comment.discussionId === currentDiscussionId)
-          .sort(([, comment1], [, comment2]) =>
-            comment1.created - comment2.created)
+          .filter(([, comment]) => comment.discussionId === currentDiscussionId)
+          .sort(([, comment1], [, comment2]) => comment1.created - comment2.created)
           .forEach(([commentId, comment]) => {
             comments[commentId] = comment;
           });
@@ -120,10 +111,8 @@ export default {
     },
     currentDiscussionLastCommentId: (state, { currentDiscussionComments }) =>
       Object.keys(currentDiscussionComments).pop(),
-    currentDiscussionLastComment: (
-      state,
-      { currentDiscussionComments, currentDiscussionLastCommentId },
-    ) => currentDiscussionComments[currentDiscussionLastCommentId],
+    currentDiscussionLastComment: (state, { currentDiscussionComments, currentDiscussionLastCommentId }) =>
+      currentDiscussionComments[currentDiscussionLastCommentId],
   },
   actions: {
     cancelNewComment({ commit, getters }) {
@@ -140,7 +129,9 @@ export default {
           await googleHelper.signin();
           syncSvc.requestSync();
           await dispatch('createNewDiscussion', selection);
-        } catch (e) { /* cancel */ }
+        } catch (e) {
+          /* cancel */
+        }
       } else if (selection) {
         let text = rootGetters['content/current'].text.slice(selection.start, selection.end).trim();
         const maxLength = 80;
@@ -150,12 +141,7 @@ export default {
         commit('setNewDiscussion', { ...selection, text });
       }
     },
-    cleanCurrentFile({
-      getters,
-      rootGetters,
-      commit,
-      dispatch,
-    }, { filterComment, filterDiscussion } = {}) {
+    cleanCurrentFile({ getters, rootGetters, commit, dispatch }, { filterComment, filterDiscussion } = {}) {
       const { discussions } = rootGetters['content/current'];
       const { comments } = rootGetters['content/current'];
       const patch = {
