@@ -13,12 +13,7 @@ export default new Provider({
   getToken({ sub }) {
     return store.getters['data/gitlabTokensBySub'][sub];
   },
-  getLocationUrl({
-    sub,
-    projectPath,
-    branch,
-    path,
-  }) {
+  getLocationUrl({ sub, projectPath, branch, path }) {
     const token = this.getToken({ sub });
     return `${token.serverUrl}/${projectPath}/blob/${encodeURIComponent(branch)}/${utils.encodeUrlPath(path)}`;
   },
@@ -104,14 +99,17 @@ export default new Provider({
       if (dotPos > 0 && slashPos < name.length) {
         name = name.slice(0, dotPos);
       }
-      const item = await workspaceSvc.createFile({
-        name,
-        parentId: store.getters['file/current'].parentId,
-        text: content.text,
-        properties: content.properties,
-        discussions: content.discussions,
-        comments: content.comments,
-      }, true);
+      const item = await workspaceSvc.createFile(
+        {
+          name,
+          parentId: store.getters['file/current'].parentId,
+          text: content.text,
+          properties: content.properties,
+          discussions: content.discussions,
+          comments: content.comments,
+        },
+        true,
+      );
       store.commit('file/setCurrentId', item.id);
       workspaceSvc.addSyncLocation({
         ...updatedSyncLocation,
@@ -155,12 +153,7 @@ export default new Provider({
     // Revision are already loaded
     return false;
   },
-  async getFileRevisionContent({
-    token,
-    contentId,
-    syncLocation,
-    revisionId,
-  }) {
+  async getFileRevisionContent({ token, contentId, syncLocation, revisionId }) {
     const { data } = await gitlabHelper.downloadFile({
       ...syncLocation,
       token,
