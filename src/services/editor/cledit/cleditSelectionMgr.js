@@ -29,14 +29,10 @@ function SelectionMgr(editor) {
 
   this.createRange = (start, end) => {
     const range = document.createRange();
-    const startContainer = typeof start === 'number'
-      ? this.findContainer(start < 0 ? 0 : start)
-      : start;
+    const startContainer = typeof start === 'number' ? this.findContainer(start < 0 ? 0 : start) : start;
     let endContainer = startContainer;
     if (start !== end) {
-      endContainer = typeof end === 'number'
-        ? this.findContainer(end < 0 ? 0 : end)
-        : end;
+      endContainer = typeof end === 'number' ? this.findContainer(end < 0 ? 0 : end) : end;
     }
     range.setStart(startContainer.container, startContainer.offsetInContainer);
     range.setEnd(endContainer.container, endContainer.offsetInContainer);
@@ -45,12 +41,9 @@ function SelectionMgr(editor) {
 
   let adjustScroll;
   const debouncedUpdateCursorCoordinates = debounce(() => {
-    const coordinates = this.getCoordinates(
-      this.selectionEnd,
-      this.selectionEndContainer,
-      this.selectionEndOffset,
-    );
-    if (this.cursorCoordinates.top !== coordinates.top ||
+    const coordinates = this.getCoordinates(this.selectionEnd, this.selectionEndContainer, this.selectionEndOffset);
+    if (
+      this.cursorCoordinates.top !== coordinates.top ||
       this.cursorCoordinates.height !== coordinates.height ||
       this.cursorCoordinates.left !== coordinates.left
     ) {
@@ -63,12 +56,11 @@ function SelectionMgr(editor) {
         scrollEltHeight -= adjustScroll;
       }
       const adjustment = (scrollEltHeight / 2) * editor.options.getCursorFocusRatio();
-      let cursorTop = this.cursorCoordinates.top + (this.cursorCoordinates.height / 2);
+      let cursorTop = this.cursorCoordinates.top + this.cursorCoordinates.height / 2;
       // Adjust cursorTop with contentElt position relative to scrollElt
-      cursorTop += (contentElt.getBoundingClientRect().top - scrollElt.getBoundingClientRect().top)
-        + scrollElt.scrollTop;
+      cursorTop += contentElt.getBoundingClientRect().top - scrollElt.getBoundingClientRect().top + scrollElt.scrollTop;
       const minScrollTop = cursorTop - adjustment;
-      const maxScrollTop = (cursorTop + adjustment) - scrollEltHeight;
+      const maxScrollTop = cursorTop + adjustment - scrollEltHeight;
       if (scrollElt.scrollTop > minScrollTop) {
         scrollElt.scrollTop = minScrollTop;
       } else if (scrollElt.scrollTop < maxScrollTop) {
@@ -86,7 +78,8 @@ function SelectionMgr(editor) {
   let oldSelectionRange;
 
   const checkSelection = (selectionRange) => {
-    if (!oldSelectionRange ||
+    if (
+      !oldSelectionRange ||
       oldSelectionRange.startContainer !== selectionRange.startContainer ||
       oldSelectionRange.startOffset !== selectionRange.startOffset ||
       oldSelectionRange.endContainer !== selectionRange.endContainer ||
@@ -220,8 +213,8 @@ function SelectionMgr(editor) {
       }
 
       // Case 4: containers are siblings or descendants of siblings
-      const childA = (nodeA === root) ? root : getClosestAncestorIn(nodeA, root, true);
-      const childB = (nodeB === root) ? root : getClosestAncestorIn(nodeB, root, true);
+      const childA = nodeA === root ? root : getClosestAncestorIn(nodeA, root, true);
+      const childB = nodeB === root ? root : getClosestAncestorIn(nodeB, root, true);
 
       if (childA === childB) {
         // This shouldn't be possible
@@ -249,9 +242,9 @@ function SelectionMgr(editor) {
           const selectionRange = selection.getRangeAt(0);
           let node = selectionRange.startContainer;
           // eslint-disable-next-line no-bitwise
-          if ((contentElt.compareDocumentPosition(node)
-            & window.Node.DOCUMENT_POSITION_CONTAINED_BY)
-            || contentElt === node
+          if (
+            contentElt.compareDocumentPosition(node) & window.Node.DOCUMENT_POSITION_CONTAINED_BY ||
+            contentElt === node
           ) {
             let offset = selectionRange.startOffset;
             if (node.firstChild && offset > 0) {
@@ -274,12 +267,14 @@ function SelectionMgr(editor) {
             if (brElt && brElt.tagName === 'BR' && selectionRange.endOffset === 1) {
               selectionText += '\n';
             }
-            if (comparePoints(
-              selection.anchorNode,
-              selection.anchorOffset,
-              selection.focusNode,
-              selection.focusOffset,
-            ) === 1) {
+            if (
+              comparePoints(
+                selection.anchorNode,
+                selection.anchorOffset,
+                selection.focusNode,
+                selection.focusOffset,
+              ) === 1
+            ) {
               selectionStart = offset + selectionText.length;
               selectionEnd = offset;
             } else {
@@ -304,8 +299,8 @@ function SelectionMgr(editor) {
       return result;
     };
 
-    const saveCheckChange = () => save() && (
-      lastSelectionStart !== this.selectionStart || lastSelectionEnd !== this.selectionEnd);
+    const saveCheckChange = () =>
+      save() && (lastSelectionStart !== this.selectionStart || lastSelectionEnd !== this.selectionEnd);
 
     let nextTickAdjustScroll = false;
     const longerDebouncedSave = debounce(() => {
@@ -400,9 +395,9 @@ function SelectionMgr(editor) {
     }
     const contentRect = contentElt.getBoundingClientRect();
     return {
-      top: Math.round((rect.top - contentRect.top) + contentElt.scrollTop),
+      top: Math.round(rect.top - contentRect.top + contentElt.scrollTop),
       height: Math.round(rect.height),
-      left: Math.round((rect[left] - contentRect.left) + contentElt.scrollLeft),
+      left: Math.round(rect[left] - contentRect.left + contentElt.scrollLeft),
     };
   };
 
@@ -410,17 +405,20 @@ function SelectionMgr(editor) {
     let offsetStart = 0;
     let offsetEnd = 0;
     let nextOffset = 0;
-    editor.getContent().split(/\s/).cl_some((word) => {
-      if (word) {
-        offsetStart = nextOffset;
-        offsetEnd = nextOffset + word.length;
-        if (offsetEnd > offset) {
-          return true;
+    editor
+      .getContent()
+      .split(/\s/)
+      .cl_some((word) => {
+        if (word) {
+          offsetStart = nextOffset;
+          offsetEnd = nextOffset + word.length;
+          if (offsetEnd > offset) {
+            return true;
+          }
         }
-      }
-      nextOffset += word.length + 1;
-      return false;
-    });
+        nextOffset += word.length + 1;
+        return false;
+      });
     return {
       start: offsetStart,
       end: offsetEnd,
