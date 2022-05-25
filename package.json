@@ -24,7 +24,6 @@
     "major": "npm version major -m \"Tag v%s\"",
     "chart": "mkdir -p dist && rm -rf dist/stackedit && cp -r chart dist/stackedit && sed -i.bak -e s/STACKEDIT_VERSION/$npm_package_version/g dist/stackedit/*.yaml && rm dist/stackedit/*.yaml.bak"
   },
-  "devDependencies": {},
   "dependencies": {
     "@vue/test-utils": "^1.0.0-beta.16",
     "abcjs": "^5.2.0",
@@ -116,7 +115,7 @@
     "tmp": "^0.0.33",
     "turndown": "^4.0.2",
     "url-loader": "^1.0.1",
-    "vue": "^2.5.16",
+    "vue": "^3.2.36",
     "vue-jest": "^1.0.2",
     "vue-loader": "^15.0.9",
     "vue-style-loader": "^4.1.0",
@@ -131,8 +130,8 @@
     "worker-loader": "^1.1.1"
   },
   "engines": {
-    "node": "12.22.10",
-    "npm": "6.14.16"
+    "node": "16.14.0",
+    "npm": "8.3.1"
   },
   "browserslist": [
     "> 1%",
