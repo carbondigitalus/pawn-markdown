@@ -80,8 +80,9 @@ export default {
   queryParams: parseQueryParams(window.location.hash.slice(1)),
   setQueryParams(params = {}) {
     this.queryParams = filterParams(params);
-    const serializedParams = Object.entries(this.queryParams).map(([key, value]) =>
-      `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+    const serializedParams = Object.entries(this.queryParams)
+      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+      .join('&');
     const hash = `#${serializedParams}`;
     if (window.location.hash !== hash) {
       window.location.replace(hash);
@@ -93,28 +94,38 @@ export default {
     return `${result}\n`.replace(/\n\n$/, '\n');
   },
   sanitizeName(name) {
-    return `${name || ''}`
-      // Keep only 250 characters
-      .slice(0, 250) || constants.defaultName;
+    return (
+      `${name || ''}`
+        // Keep only 250 characters
+        .slice(0, 250) || constants.defaultName
+    );
   },
   sanitizeFilename(name) {
-    return this.sanitizeName(`${name || ''}`
-      // Replace `/`, control characters and other kind of spaces with a space
-      .replace(/[/\x00-\x1F\x7f-\xa0\s]+/g, ' ') // eslint-disable-line no-control-regex
-      .trim()) || constants.defaultName;
+    return (
+      this.sanitizeName(
+        `${name || ''}`
+          // Replace `/`, control characters and other kind of spaces with a space
+          .replace(/[/\x00-\x1F\x7f-\xa0\s]+/g, ' ') // eslint-disable-line no-control-regex
+          .trim(),
+      ) || constants.defaultName
+    );
   },
   deepCopy,
   serializeObject(obj) {
-    return obj === undefined ? obj : JSON.stringify(obj, (key, value) => {
-      if (Object.prototype.toString.call(value) !== '[object Object]') {
-        return value;
-      }
-      // Sort keys to have a predictable result
-      return Object.keys(value).sort().reduce((sorted, valueKey) => {
-        sorted[valueKey] = value[valueKey];
-        return sorted;
-      }, {});
-    });
+    return obj === undefined
+      ? obj
+      : JSON.stringify(obj, (key, value) => {
+          if (Object.prototype.toString.call(value) !== '[object Object]') {
+            return value;
+          }
+          // Sort keys to have a predictable result
+          return Object.keys(value)
+            .sort()
+            .reduce((sorted, valueKey) => {
+              sorted[valueKey] = value[valueKey];
+              return sorted;
+            }, {});
+        });
   },
   search(items, criteria) {
     let result;
@@ -129,7 +140,7 @@ export default {
   },
   uid() {
     crypto.getRandomValues(array);
-    return array.cl_map(value => alphabet[value % radix]).join('');
+    return array.cl_map((value) => alphabet[value % radix]).join('');
   },
   hash(str) {
     // https://stackoverflow.com/a/7616484/1333165
@@ -137,19 +148,21 @@ export default {
     if (!str) return hash;
     for (let i = 0; i < str.length; i += 1) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char; // eslint-disable-line no-bitwise
+      hash = (hash << 5) - hash + char; // eslint-disable-line no-bitwise
       hash |= 0; // eslint-disable-line no-bitwise
     }
     return hash;
   },
   getItemHash(item) {
-    return this.hash(this.serializeObject({
-      ...item,
-      // These properties must not be part of the hash
-      id: undefined,
-      hash: undefined,
-      history: undefined,
-    }));
+    return this.hash(
+      this.serializeObject({
+        ...item,
+        // These properties must not be part of the hash
+        id: undefined,
+        hash: undefined,
+        history: undefined,
+      }),
+    );
   },
   addItemHash(item) {
     return {
@@ -169,10 +182,7 @@ export default {
   },
   encodeBase64(str, urlSafe = false) {
     const uriEncodedStr = encodeURIComponent(str);
-    const utf8Str = uriEncodedStr.replace(
-      /%([0-9A-F]{2})/g,
-      (match, p1) => String.fromCharCode(`0x${p1}`),
-    );
+    const utf8Str = uriEncodedStr.replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode(`0x${p1}`));
     const result = btoa(utf8Str);
     if (!urlSafe) {
       return result;
@@ -188,7 +198,7 @@ export default {
     const utf8Str = atob(sanitizedStr);
     const uriEncodedStr = utf8Str
       .split('')
-      .map(c => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
       .join('');
     return decodeURIComponent(uriEncodedStr);
   },
@@ -207,7 +217,7 @@ export default {
     return properties;
   },
   randomize(value) {
-    return Math.floor((1 + (Math.random() * 0.2)) * value);
+    return Math.floor((1 + Math.random() * 0.2) * value);
   },
   setInterval(func, interval) {
     return setInterval(() => func(), this.randomize(interval));
@@ -240,13 +250,14 @@ export default {
   },
   parseQueryParams,
   addQueryParams(url = '', params = {}, hash = false) {
-    const keys = Object.keys(params).filter(key => params[key] != null);
+    const keys = Object.keys(params).filter((key) => params[key] != null);
     urlParser.href = url;
     if (!keys.length) {
       return urlParser.href;
     }
-    const serializedParams = keys.map(key =>
-      `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`).join('&');
+    const serializedParams = keys
+      .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+      .join('&');
     if (hash) {
       if (urlParser.hash) {
         urlParser.hash += '&';
@@ -283,14 +294,21 @@ export default {
     return urlParser.hostname;
   },
   encodeUrlPath(path) {
-    return path ? path.split('/').map(encodeURIComponent).join('/') : '';
+    return path
+      ? path
+          .split('/')
+          .map(encodeURIComponent)
+          .join('/')
+      : '';
   },
   parseGithubRepoUrl(url) {
     const parsedRepo = url && url.match(/([^/:]+)\/([^/]+?)(?:\.git|\/)?$/);
-    return parsedRepo && {
-      owner: parsedRepo[1],
-      repo: parsedRepo[2],
-    };
+    return (
+      parsedRepo && {
+        owner: parsedRepo[1],
+        repo: parsedRepo[2],
+      }
+    );
   },
   parseGitlabProjectPath(url) {
     const parsedProject = url && url.match(/^https:\/\/[^/]+\/(.+?)(?:\.git|\/)?$/);
@@ -308,14 +326,14 @@ export default {
   wrapRange(range, eltProperties) {
     const rangeLength = `${range}`.length;
     let wrappedLength = 0;
-    const treeWalker = document
-      .createTreeWalker(range.commonAncestorContainer, NodeFilter.SHOW_TEXT);
+    const treeWalker = document.createTreeWalker(range.commonAncestorContainer, NodeFilter.SHOW_TEXT);
     let { startOffset } = range;
     treeWalker.currentNode = range.startContainer;
     if (treeWalker.currentNode.nodeType === Node.TEXT_NODE || treeWalker.nextNode()) {
       do {
         if (treeWalker.currentNode.nodeValue !== '\n') {
-          if (treeWalker.currentNode === range.endContainer &&
+          if (
+            treeWalker.currentNode === range.endContainer &&
             range.endOffset < treeWalker.currentNode.nodeValue.length
           ) {
             treeWalker.currentNode.splitText(range.endOffset);
@@ -335,8 +353,7 @@ export default {
         if (wrappedLength >= rangeLength) {
           break;
         }
-      }
-      while (treeWalker.nextNode());
+      } while (treeWalker.nextNode());
     }
   },
   unwrapRange(eltCollection) {
