@@ -17,7 +17,7 @@ const sanitizeUserId = (userId) => {
   }
   return `go:${userId}`;
 };
-// eslint-disable-next-line
+
 const parseUserId = (userId) => {
   return [typesBySubPrefix[userId.slice(0, 2)], userId.slice(3)];
 };
