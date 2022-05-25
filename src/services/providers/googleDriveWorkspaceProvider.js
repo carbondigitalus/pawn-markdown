@@ -30,11 +30,9 @@ export default new Provider({
     return id;
   },
   async initWorkspace() {
-    const makeWorkspaceId = folderId => folderId
-      && utils.makeWorkspaceId(this.getWorkspaceParams({ folderId }));
+    const makeWorkspaceId = (folderId) => folderId && utils.makeWorkspaceId(this.getWorkspaceParams({ folderId }));
 
-    const getWorkspace = folderId =>
-      store.getters['workspace/workspacesById'][makeWorkspaceId(folderId)];
+    const getWorkspace = (folderId) => store.getters['workspace/workspacesById'][makeWorkspaceId(folderId)];
 
     const initFolder = async (token, folder) => {
       const appProperties = {
@@ -68,9 +66,10 @@ export default new Provider({
       }
 
       // Update workspace if some properties are missing
-      if (appProperties.folderId !== folder.appProperties.folderId
-        || appProperties.dataFolderId !== folder.appProperties.dataFolderId
-        || appProperties.trashFolderId !== folder.appProperties.trashFolderId
+      if (
+        appProperties.folderId !== folder.appProperties.folderId ||
+        appProperties.dataFolderId !== folder.appProperties.dataFolderId ||
+        appProperties.trashFolderId !== folder.appProperties.trashFolderId
       ) {
         await googleHelper.uploadFile({
           token,
@@ -165,9 +164,12 @@ export default new Provider({
             [syncData.id]: syncData,
           });
         }
-        const file = await workspaceSvc.createFile({
-          parentId: syncData && syncData.itemId,
-        }, true);
+        const file = await workspaceSvc.createFile(
+          {
+            parentId: syncData && syncData.itemId,
+          },
+          true,
+        );
         store.commit('file/setCurrentId', file.id);
         // File will be created on next workspace sync
         break;
@@ -190,8 +192,12 @@ export default new Provider({
     const workspace = store.getters['workspace/currentWorkspace'];
     const syncToken = store.getters['workspace/syncToken'];
     const lastStartPageToken = store.getters['data/localSettings'].syncStartPageToken;
-    const { changes, startPageToken } = await googleHelper
-      .getChanges(syncToken, lastStartPageToken, false, workspace.teamDriveId);
+    const { changes, startPageToken } = await googleHelper.getChanges(
+      syncToken,
+      lastStartPageToken,
+      false,
+      workspace.teamDriveId,
+    );
 
     syncStartPageToken = startPageToken;
     return changes;
@@ -214,9 +220,10 @@ export default new Provider({
     const result = [];
     changes.forEach((change) => {
       // Ignore changes on StackEdit own folders
-      if (change.fileId === workspace.folderId
-        || change.fileId === workspace.dataFolderId
-        || change.fileId === workspace.trashFolderId
+      if (
+        change.fileId === workspace.folderId ||
+        change.fileId === workspace.dataFolderId ||
+        change.fileId === workspace.trashFolderId
       ) {
         return;
       }
@@ -225,8 +232,7 @@ export default new Provider({
       if (change.file) {
         // Ignore changes in files that are not in the workspace
         const { appProperties } = change.file;
-        if (!appProperties || appProperties.folderId !== workspace.folderId
-        ) {
+        if (!appProperties || appProperties.folderId !== workspace.folderId) {
           return;
         }
 
@@ -240,9 +246,7 @@ export default new Provider({
           }
         } else {
           // Change on a file or folder
-          const type = change.file.mimeType === googleHelper.folderMimeType
-            ? 'folder'
-            : 'file';
+          const type = change.file.mimeType === googleHelper.folderMimeType ? 'folder' : 'file';
           const item = {
             id: appProperties.id,
             type,
@@ -251,7 +255,7 @@ export default new Provider({
           };
 
           // Fill parentId
-          if (change.file.parents.some(parentId => parentId === workspace.trashFolderId)) {
+          if (change.file.parents.some((parentId) => parentId === workspace.trashFolderId)) {
             item.parentId = 'trash';
           } else {
             change.file.parents.some((parentId) => {
@@ -419,13 +423,7 @@ export default new Provider({
       },
     };
   },
-  async uploadWorkspaceContent({
-    token,
-    content,
-    file,
-    fileSyncData,
-    ifNotTooLate,
-  }) {
+  async uploadWorkspaceContent({ token, content, file, fileSyncData, ifNotTooLate }) {
     let gdriveFile;
     let newFileSyncData;
 
@@ -474,12 +472,7 @@ export default new Provider({
       fileSyncData: newFileSyncData,
     };
   },
-  async uploadWorkspaceData({
-    token,
-    item,
-    syncData,
-    ifNotTooLate,
-  }) {
+  async uploadWorkspaceData({ token, item, syncData, ifNotTooLate }) {
     const workspace = store.getters['workspace/currentWorkspace'];
     const file = await googleHelper.uploadFile({
       token,
@@ -512,7 +505,7 @@ export default new Provider({
   },
   async listFileRevisions({ token, fileSyncDataId }) {
     const revisions = await googleHelper.getFileRevisions(token, fileSyncDataId);
-    return revisions.map(revision => ({
+    return revisions.map((revision) => ({
       id: revision.id,
       sub: `${googleHelper.subPrefix}:${revision.lastModifyingUser.permissionId}`,
       created: new Date(revision.modifiedTime).getTime(),
@@ -522,12 +515,7 @@ export default new Provider({
     // Revision are already loaded
     return false;
   },
-  async getFileRevisionContent({
-    token,
-    contentId,
-    fileSyncDataId,
-    revisionId,
-  }) {
+  async getFileRevisionContent({ token, contentId, fileSyncDataId, revisionId }) {
     const content = await googleHelper.downloadFileRevision(token, fileSyncDataId, revisionId);
     return Provider.parseContent(content, contentId);
   },
