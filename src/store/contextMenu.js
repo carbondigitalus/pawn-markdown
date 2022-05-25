@@ -1,4 +1,4 @@
-const setter = propertyName => (state, value) => {
+const setter = (propertyName) => (state, value) => {
   state[propertyName] = value;
 };
 
@@ -45,7 +45,7 @@ export default {
         }
       }, 1);
 
-      return new Promise(resolve => commit('setResolve', resolve));
+      return new Promise((resolve) => commit('setResolve', resolve));
     },
     close({ commit }) {
       commit('setItems', []);
