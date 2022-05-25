@@ -111,12 +111,7 @@ export default new Provider({
       },
     };
   },
-  async uploadWorkspaceContent({
-    token,
-    content,
-    contentSyncData,
-    ifNotTooLate,
-  }) {
+  async uploadWorkspaceContent({ token, content, contentSyncData, ifNotTooLate }) {
     const gdriveFile = await googleHelper.uploadAppDataFile({
       token,
       name: JSON.stringify({
@@ -139,12 +134,7 @@ export default new Provider({
       },
     };
   },
-  async uploadWorkspaceData({
-    token,
-    item,
-    syncData,
-    ifNotTooLate,
-  }) {
+  async uploadWorkspaceData({ token, item, syncData, ifNotTooLate }) {
     const file = await googleHelper.uploadAppDataFile({
       token,
       name: JSON.stringify({
@@ -169,7 +159,7 @@ export default new Provider({
   },
   async listFileRevisions({ token, contentSyncDataId }) {
     const revisions = await googleHelper.getAppDataFileRevisions(token, contentSyncDataId);
-    return revisions.map(revision => ({
+    return revisions.map((revision) => ({
       id: revision.id,
       sub: `${googleHelper.subPrefix}:${revision.lastModifyingUser.permissionId}`,
       created: new Date(revision.modifiedTime).getTime(),
@@ -180,8 +170,7 @@ export default new Provider({
     return false;
   },
   async getFileRevisionContent({ token, contentSyncDataId, revisionId }) {
-    const content = await googleHelper
-      .downloadAppDataFileRevision(token, contentSyncDataId, revisionId);
+    const content = await googleHelper.downloadAppDataFileRevision(token, contentSyncDataId, revisionId);
     return JSON.parse(content);
   },
 });
