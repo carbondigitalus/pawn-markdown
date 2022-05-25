@@ -15,18 +15,13 @@ export default {
     coordinates: null,
   }),
   methods: {
-    ...mapActions('discussion', [
-      'createNewDiscussion',
-    ]),
+    ...mapActions('discussion', ['createNewDiscussion']),
     checkSelection() {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         let offset;
         // Show the button if content is not a revision and has the focus
-        if (
-          !store.state.content.revisionContent &&
-          editorSvc.clEditor.selectionMgr.hasFocus()
-        ) {
+        if (!store.state.content.revisionContent && editorSvc.clEditor.selectionMgr.hasFocus()) {
           this.selection = editorSvc.getTrimmedSelection();
           if (this.selection) {
             const text = editorSvc.clEditor.getContent();
@@ -36,9 +31,7 @@ export default {
             }
           }
         }
-        this.coordinates = offset
-          ? editorSvc.clEditor.selectionMgr.getCoordinates(offset)
-          : null;
+        this.coordinates = offset ? editorSvc.clEditor.selectionMgr.getCoordinates(offset) : null;
       }, 25);
     },
   },

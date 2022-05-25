@@ -125,9 +125,11 @@ import zendeskHelper from '../../services/providers/helpers/zendeskHelper';
 import publishSvc from '../../services/publishSvc';
 import store from '../../store';
 
-const tokensToArray = (tokens, filter = () => true) => Object.values(tokens)
-  .filter(token => filter(token))
-  .sort((token1, token2) => token1.name.localeCompare(token2.name));
+const tokensToArray = (tokens, filter = () => true) =>
+  Object.values(tokens)
+    // eslint-disable-next-line arrow-parens
+    .filter((token) => filter(token))
+    .sort((token1, token2) => token1.name.localeCompare(token2.name));
 
 const publishModalOpener = (type, featureId) => async (token) => {
   try {
@@ -136,7 +138,9 @@ const publishModalOpener = (type, featureId) => async (token) => {
       token,
     });
     publishSvc.createPublishLocation(publishLocation, featureId);
-  } catch (e) { /* cancel */ }
+  } catch (e) {
+    /* cancel */
+  }
 };
 
 export default {
@@ -144,12 +148,8 @@ export default {
     MenuEntry,
   },
   computed: {
-    ...mapState('queue', [
-      'isPublishRequested',
-    ]),
-    ...mapGetters('file', [
-      'isCurrentTemp',
-    ]),
+    ...mapState('queue', ['isPublishRequested']),
+    ...mapGetters('file', ['isCurrentTemp']),
     ...mapGetters('publishLocation', {
       publishLocations: 'current',
     }),
@@ -160,7 +160,8 @@ export default {
       return `"${store.getters['file/current'].name}"`;
     },
     bloggerTokens() {
-      return tokensToArray(store.getters['data/googleTokensBySub'], token => token.isBlogger);
+      // eslint-disable-next-line arrow-parens
+      return tokensToArray(store.getters['data/googleTokensBySub'], (token) => token.isBlogger);
     },
     dropboxTokens() {
       return tokensToArray(store.getters['data/dropboxTokensBySub']);
@@ -172,7 +173,8 @@ export default {
       return tokensToArray(store.getters['data/gitlabTokensBySub']);
     },
     googleDriveTokens() {
-      return tokensToArray(store.getters['data/googleTokensBySub'], token => token.isDrive);
+      // eslint-disable-next-line arrow-parens
+      return tokensToArray(store.getters['data/googleTokensBySub'], (token) => token.isDrive);
     },
     wordpressTokens() {
       return tokensToArray(store.getters['data/wordpressTokensBySub']);
@@ -181,13 +183,15 @@ export default {
       return tokensToArray(store.getters['data/zendeskTokensBySub']);
     },
     noToken() {
-      return !this.bloggerTokens.length
-        && !this.dropboxTokens.length
-        && !this.githubTokens.length
-        && !this.gitlabTokens.length
-        && !this.googleDriveTokens.length
-        && !this.wordpressTokens.length
-        && !this.zendeskTokens.length;
+      return (
+        !this.bloggerTokens.length &&
+        !this.dropboxTokens.length &&
+        !this.githubTokens.length &&
+        !this.gitlabTokens.length &&
+        !this.googleDriveTokens.length &&
+        !this.wordpressTokens.length &&
+        !this.zendeskTokens.length
+      );
     },
   },
   methods: {
@@ -199,47 +203,63 @@ export default {
     async managePublish() {
       try {
         await store.dispatch('modal/open', 'publishManagement');
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addBloggerAccount() {
       try {
         await googleHelper.addBloggerAccount();
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addDropboxAccount() {
       try {
         await store.dispatch('modal/open', { type: 'dropboxAccount' });
         await dropboxHelper.addAccount(!store.getters['data/localSettings'].dropboxRestrictedAccess);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addGithubAccount() {
       try {
         await store.dispatch('modal/open', { type: 'githubAccount' });
         await githubHelper.addAccount(store.getters['data/localSettings'].githubRepoFullAccess);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addGitlabAccount() {
       try {
         const { serverUrl, applicationId } = await store.dispatch('modal/open', { type: 'gitlabAccount' });
         await gitlabHelper.addAccount(serverUrl, applicationId);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addGoogleDriveAccount() {
       try {
         await store.dispatch('modal/open', { type: 'googleDriveAccount' });
         await googleHelper.addDriveAccount(!store.getters['data/localSettings'].googleDriveRestrictedAccess);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addWordpressAccount() {
       try {
         await wordpressHelper.addAccount();
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addZendeskAccount() {
       try {
         const { subdomain, clientId } = await store.dispatch('modal/open', { type: 'zendeskAccount' });
         await zendeskHelper.addAccount(subdomain, clientId);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     publishBlogger: publishModalOpener('bloggerPublish', 'publishToBlogger'),
     publishBloggerPage: publishModalOpener('bloggerPagePublish', 'publishToBloggerPage'),

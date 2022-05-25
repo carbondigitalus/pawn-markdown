@@ -2,25 +2,22 @@
   <modal-inner class="modal__inner-1--about-modal" aria-label="About">
     <div class="modal__content">
       <div class="logo-background"></div>
-      StackEdit on <a target="_blank" href="https://github.com/benweet/stackedit/">GitHub</a>
+      PawnMD on <a target="_blank" href="https://github.com/fortembr/pawn-markdown/">GitHub</a>
       <br>
-      <a target="_blank" href="https://github.com/benweet/stackedit/issues">Issue tracker</a> — <a target="_blank" href="https://github.com/benweet/stackedit/releases">Changelog</a>
+      <a target="_blank" href="https://github.com/fortembr/pawn-markdown/issues">Issue tracker</a> — <a target="_blank" href="https://github.com/fortembr/pawn-markdown/releases">Changelog</a>
       <br>
-      <a target="_blank" href="https://chrome.google.com/webstore/detail/iiooodelglhkcpgbajoejffhijaclcdg">Chrome app</a> — <a target="_blank" href="https://chrome.google.com/webstore/detail/ajehldoplanpchfokmeempkekhnhmoha">Chrome extension</a>
+      <a target="_blank" href="https://fortembr.com/discord/">Community</a> — <a target="_blank" href="https://community.stackedit.io/c/how-to">Tutos and How To</a>
       <br>
-      <a target="_blank" href="https://community.stackedit.io/">Community</a> — <a target="_blank" href="https://community.stackedit.io/c/how-to">Tutos and How To</a>
-      <br>
-      StackEdit on <a target="_blank" href="https://twitter.com/stackedit/">Twitter</a>
+      PawnMD on <a target="_blank" href="https://twitter.com/fortembr/">Twitter</a>
       <hr>
       <small>© 2013-2019 Dock5 Software Ltd.<br>v{{version}}</small>
       <h3>FAQ</h3>
       <div class="faq" v-html="faq"></div>
       <div class="modal__info">
-        For commercial support or custom development, please <a href="mailto:stackedit.project@gmail.com">contact us</a>.
+        For commercial support or custom development, please <a href="mailto:hello@fortembr.com">contact us</a>.
       </div>
-      Licensed under an
       <a target="_blank" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License</a><br>
-      <a target="_blank" href="privacy_policy.html">Privacy Policy</a>
+      <a target="_blank" href="https://fortembr.com/legal/privacy-policy/">Privacy Policy</a>
     </div>
     <div class="modal__button-bar">
       <button class="button button--resolve" @click="config.resolve()">Close</button>
@@ -42,9 +39,7 @@ export default {
     version: VERSION,
   }),
   computed: {
-    ...mapGetters('modal', [
-      'config',
-    ]),
+    ...mapGetters('modal', ['config']),
     faq() {
       return markdownConversionSvc.defaultConverter.render(faq);
     },

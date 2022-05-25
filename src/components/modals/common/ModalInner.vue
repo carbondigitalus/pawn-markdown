@@ -14,9 +14,7 @@ import { mapGetters } from 'vuex';
 
 export default {
   computed: {
-    ...mapGetters('modal', [
-      'config',
-    ]),
+    ...mapGetters('modal', ['config']),
   },
 };
 </script>

@@ -72,7 +72,7 @@
   <span class="token key atrule">katex</span><span class="token punctuation">:</span>
     <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
 </code></pre>
-          <p>For the full list of options, see <a href="https://github.com/benweet/stackedit/blob/master/src/data/presets.js" target="_blank">here</a>.</p>
+          <p>For the full list of options, see <a href="https://github.com/fortembr/pawn-markdown/blob/master/src/data/presets.js" target="_blank">here</a>.</p>
         </div>
       </div>
     </div>
@@ -121,9 +121,7 @@ export default {
     ...metadataProperties,
   }),
   computed: {
-    ...mapGetters('modal', [
-      'config',
-    ]),
+    ...mapGetters('modal', ['config']),
     presets: () => Object.keys(presets).sort(),
     tab: {
       get() {
@@ -186,9 +184,7 @@ export default {
         } else {
           delete properties.extensions;
         }
-        this.setYamlProperties(Object.keys(properties).length
-          ? yaml.safeDump(properties)
-          : '\n');
+        this.setYamlProperties(Object.keys(properties).length ? yaml.safeDump(properties) : '\n');
       }
     },
     setSimpleTab() {
@@ -217,14 +213,16 @@ export default {
         this.setYamlTab();
       } else {
         const properties = this.properties || {};
-        if (Object.keys(metadataProperties).some(key => properties[key])) {
+        // eslint-disable-next-line arrow-parens
+        if (Object.keys(metadataProperties).some((key) => properties[key])) {
           badgeSvc.addBadge('setMetadata');
         }
         const extensions = properties.extensions || {};
         if (extensions.preset) {
           badgeSvc.addBadge('changePreset');
         }
-        if (Object.keys(extensions).filter(key => key !== 'preset').length) {
+        // eslint-disable-next-line arrow-parens
+        if (Object.keys(extensions).filter((key) => key !== 'preset').length) {
           badgeSvc.addBadge('changeExtension');
         }
         store.commit('content/patchItem', {

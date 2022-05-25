@@ -3,7 +3,7 @@
     <div class="tour-step" :class="'tour-step--' + step" :style="stepStyle">
       <div class="tour-step__inner" v-if="step === 'welcome'">
         <h2>Welcome back!</h2>
-        <p>The new <b>StackEdit 5</b> is here!</p>
+        <p>The new <b>PawnMD 5.15</b> is here!</p>
         <p>Please click <b>Next</b> to take a quick tour.</p>
         <div class="tour-step__button-bar">
           <button class="button" @click="finish">Skip</button>
@@ -12,7 +12,7 @@
       </div>
       <div class="tour-step__inner" v-else-if="step === 'editor'">
         <h2>Your Markdown editor</h2>
-        <p>StackEdit converts your Markdown to HTML in real-time.</p>
+        <p>PawnMD converts your Markdown to HTML in real-time.</p>
         <p>Click <icon-side-preview></icon-side-preview> to toggle the side preview.</p>
         <div class="tour-step__button-bar">
           <button class="button" @click="finish">Skip</button>
@@ -21,7 +21,7 @@
       </div>
       <div class="tour-step__inner" v-else-if="step === 'explorer'">
         <h2>File explorer</h2>
-        <p>StackEdit can manage multiple files and folders in a workspace.</p>
+        <p>PawnMD can manage multiple files and folders in a workspace.</p>
         <p>Click <icon-folder></icon-folder> to open the file explorer.</p>
         <div class="tour-step__button-bar">
           <button class="button" @click="finish">Skip</button>
@@ -30,7 +30,7 @@
       </div>
       <div class="tour-step__inner" v-else-if="step === 'menu'">
         <h2>Do a lot more!</h2>
-        <p>StackEdit can also synchronize and publish your files, manage collaborative workspaces...</p>
+        <p>PawnMD can also synchronize and publish your files, manage collaborative workspaces...</p>
         <p>Click <icon-provider provider-id="stackedit"></icon-provider> to explore the menu.</p>
         <div class="tour-step__button-bar">
           <button class="button" @click="finish">Skip</button>
@@ -39,8 +39,7 @@
       </div>
       <div class="tour-step__inner" v-else-if="step === 'end'">
         <h2>Enjoy!</h2>
-        <p>If you like StackEdit, please rate 5 stars on the <a target="_blank" href="https://chrome.google.com/webstore/detail/iiooodelglhkcpgbajoejffhijaclcdg/reviews">Chrome Web Store</a>.</p>
-        <p>You can also star the project on <a target="_blank" href="https://github.com/benweet/stackedit">GitHub</a> and join the <a target="_blank" href="https://community.stackedit.io/">community</a>.</p>
+        <p>You can also star the project on <a target="_blank" href="https://github.com/fortembr/pawn-markdown/">GitHub</a> and join the <a target="_blank" href="https://fortembr.com/discord/">community</a>.</p>
         <div class="tour-step__button-bar">
           <button class="button button--resolve" @click="finish">Ok</button>
         </div>
@@ -53,13 +52,7 @@
 import Vue from 'vue';
 import store from '../store';
 
-const steps = [
-  'welcome',
-  'editor',
-  'explorer',
-  'menu',
-  'end',
-];
+const steps = ['welcome', 'editor', 'explorer', 'menu', 'end'];
 
 export default {
   data: () => ({
@@ -81,8 +74,10 @@ export default {
         const anchorSteps = (anchorElt.getAttribute('tour-step-anchor') || '').split(',');
         anchorSteps.forEach((step) => {
           const style = {
-            top: `${anchorRect.top + (anchorRect.height / 2)}px`,
-            left: `${anchorRect.left + (anchorRect.width / 2)}px`,
+            // eslint-disable-next-line no-mixed-operators
+            top: `${anchorRect.top + anchorRect.height / 2}px`,
+            // eslint-disable-next-line no-mixed-operators
+            left: `${anchorRect.left + anchorRect.width / 2}px`,
           };
           switch (step) {
             case 'welcome':
@@ -116,11 +111,7 @@ export default {
     },
   },
   mounted() {
-    this.$watch(
-      () => store.getters['layout/styles'],
-      () => this.updatePositions(),
-      { immediate: true },
-    );
+    this.$watch(() => store.getters['layout/styles'], () => this.updatePositions(), { immediate: true });
   },
 };
 </script>

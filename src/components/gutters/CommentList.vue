@@ -25,16 +25,8 @@ export default {
     tops: {},
   }),
   computed: {
-    ...mapGetters('layout', [
-      'constants',
-      'styles',
-    ]),
-    ...mapState('discussion', [
-      'currentDiscussionId',
-      'isCommenting',
-      'newCommentText',
-      'stickyComment',
-    ]),
+    ...mapGetters('layout', ['constants', 'styles']),
+    ...mapState('discussion', ['currentDiscussionId', 'isCommenting', 'newCommentText', 'stickyComment']),
     ...mapGetters('discussion', [
       'newDiscussion',
       'currentDiscussion',
@@ -53,16 +45,11 @@ export default {
       ]);
     },
     updateStickyTrigger() {
-      return utils.serializeObject([
-        this.updateTopsTrigger,
-        this.newCommentText,
-      ]);
+      return utils.serializeObject([this.updateTopsTrigger, this.newCommentText]);
     },
   },
   methods: {
-    ...mapMutations('discussion', [
-      'setCurrentDiscussionId',
-    ]),
+    ...mapMutations('discussion', ['setCurrentDiscussionId']),
     updateTops() {
       const layoutSettings = store.getters['data/layoutSettings'];
       const minTop = -2;
@@ -75,7 +62,8 @@ export default {
           : editorSvc.getPreviewOffsetCoordinates(editorSvc.getPreviewOffset(discussion.end));
         let commentTop = minTop;
         if (coordinates) {
-          commentTop = (coordinates.top + coordinates.height) - 80;
+          // eslint-disable-next-line no-mixed-operators
+          commentTop = coordinates.top + coordinates.height - 80;
         }
         let top = commentTop;
         if (isCurrent) {
@@ -105,32 +93,24 @@ export default {
           if (discussion === this.currentDiscussion || discussion === this.newDiscussion) {
             tops.current = getTop(
               discussion,
-              this.currentDiscussionLastCommentId
-                && this.$el.querySelector(`.comment--${this.currentDiscussionLastCommentId}`),
+              this.currentDiscussionLastCommentId &&
+                this.$el.querySelector(`.comment--${this.currentDiscussionLastCommentId}`),
               this.$el.querySelector('.comment--new'),
               true,
             );
           } else {
-            tops[discussionId] = getTop(
-              discussion,
-              this.$el.querySelector(`.comment--discussion-${discussionId}`),
-            );
+            tops[discussionId] = getTop(discussion, this.$el.querySelector(`.comment--discussion-${discussionId}`));
           }
         });
       this.tops = tops;
     },
   },
   mounted() {
-    this.$watch(
-      () => this.updateTopsTrigger,
-      () => this.updateTops(),
-      { immediate: true },
-    );
+    this.$watch(() => this.updateTopsTrigger, () => this.updateTops(), { immediate: true });
 
     const layoutSettings = store.getters['data/layoutSettings'];
-    this.scrollerElt = layoutSettings.showEditor
-      ? editorSvc.editorElt.parentNode
-      : editorSvc.previewElt.parentNode;
+    // eslint-disable-next-line max-len
+    this.scrollerElt = layoutSettings.showEditor ? editorSvc.editorElt.parentNode : editorSvc.previewElt.parentNode;
 
     this.updateSticky = () => {
       let height = 0;
@@ -146,8 +126,9 @@ export default {
       }
       const currentDiscussionElt = document.querySelector('.current-discussion__inner');
       const minOffsetTop = this.scrollerElt.scrollTop + 10;
-      const maxOffsetTop = (this.scrollerElt.scrollTop + this.scrollerElt.clientHeight) - height
-        - currentDiscussionElt.clientHeight;
+      const maxOffsetTop =
+        // eslint-disable-next-line max-len, no-mixed-operators
+        this.scrollerElt.scrollTop + this.scrollerElt.clientHeight - height - currentDiscussionElt.clientHeight;
       let stickyComment = null;
       if (offsetTop > maxOffsetTop || maxOffsetTop < minOffsetTop) {
         stickyComment = 'bottom';
@@ -160,11 +141,7 @@ export default {
     };
 
     this.scrollerElt.addEventListener('scroll', this.updateSticky);
-    this.$watch(
-      () => this.updateStickyTrigger,
-      () => this.updateSticky(),
-      { immediate: true },
-    );
+    this.$watch(() => this.updateStickyTrigger, () => this.updateSticky(), { immediate: true });
 
     // Move preview discussions once previewCtxWithDiffs has been calculated
     if (!editorSvc.previewCtxWithDiffs) {

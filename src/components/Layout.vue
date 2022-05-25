@@ -80,30 +80,17 @@ export default {
     FindReplace,
   },
   computed: {
-    ...mapState([
-      'light',
-    ]),
-    ...mapState('content', [
-      'revisionContent',
-    ]),
-    ...mapState('discussion', [
-      'stickyComment',
-    ]),
-    ...mapGetters('layout', [
-      'constants',
-      'styles',
-    ]),
-    ...mapGetters('data', [
-      'layoutSettings',
-    ]),
+    ...mapState(['light']),
+    ...mapState('content', ['revisionContent']),
+    ...mapState('discussion', ['stickyComment']),
+    ...mapGetters('layout', ['constants', 'styles']),
+    ...mapGetters('data', ['layoutSettings']),
     showFindReplace() {
       return !!store.state.findReplace.type;
     },
   },
   methods: {
-    ...mapActions('layout', [
-      'updateBodySize',
-    ]),
+    ...mapActions('layout', ['updateBodySize']),
     saveSelection: () => editorSvc.saveSelection(true),
   },
   created() {

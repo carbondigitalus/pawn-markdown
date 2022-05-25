@@ -1,5 +1,5 @@
-@import './variables.scss';
-
+/* stylelint-disable */
+@import "./variables.scss";
 body {
   background-color: #fff;
   top: 0;
@@ -26,12 +26,9 @@ body {
 ::-webkit-scrollbar {
   background-color: transparent;
 
-  /* stylelint-disable-next-line selector-pseudo-class-no-unknown */
   &:horizontal {
     height: 8px;
   }
-
-  /* stylelint-disable-next-line selector-pseudo-class-no-unknown */
   &:vertical {
     width: 8px;
   }
@@ -42,7 +39,7 @@ body {
   background-color: #bbb;
 
   .app--dark & {
-    background-color: #666;
+    background-color: $blue;
   }
 }
 
@@ -50,8 +47,8 @@ body {
   outline: none;
 }
 
-input[type=checkbox] {
-  outline: #349be8 auto 5px;
+input[type="checkbox"] {
+  outline: $limegreen auto 5px;
 }
 
 .icon {
@@ -94,7 +91,7 @@ textarea {
 }
 
 .button {
-  color: #333;
+  color: $limegreen;
   background-color: transparent;
   display: inline-block;
   height: auto;
@@ -154,7 +151,7 @@ textarea {
 }
 
 .button--resolve {
-  background-color: #349be8;
+  background-color: $limegreen;
   color: #fff;
   margin: -2px 0 -2px 4px;
   padding: 10px 20px;
@@ -266,7 +263,7 @@ textarea {
 }
 
 .logo-background {
-  background: no-repeat center url('../assets/logo.svg');
+  background: no-repeat center url("../assets/logo.png");
   background-size: contain;
 }
 
@@ -308,20 +305,36 @@ textarea {
 
 .discussion-editor-highlighting,
 .discussion-preview-highlighting {
-  background-color: mix($editor-background-light, $selection-highlighting-color, 70%);
+  background-color: mix(
+    $editor-background-light,
+    $selection-highlighting-color,
+    70%
+  );
   padding: 0.25em 0;
 
   .app--dark & {
-    background-color: mix($editor-background-dark, $selection-highlighting-color, 70%);
+    background-color: mix(
+      $editor-background-dark,
+      $selection-highlighting-color,
+      70%
+    );
   }
 }
 
 .discussion-editor-highlighting--hover,
 .discussion-preview-highlighting--hover {
-  background-color: mix($editor-background-light, $selection-highlighting-color, 50%);
+  background-color: mix(
+    $editor-background-light,
+    $selection-highlighting-color,
+    50%
+  );
 
   .app--dark & {
-    background-color: mix($editor-background-dark, $selection-highlighting-color, 50%);
+    background-color: mix(
+      $editor-background-dark,
+      $selection-highlighting-color,
+      50%
+    );
   }
 
   * {
@@ -331,10 +344,18 @@ textarea {
 
 .discussion-editor-highlighting--selected,
 .discussion-preview-highlighting--selected {
-  background-color: mix($editor-background-light, $selection-highlighting-color, 20%);
+  background-color: mix(
+    $editor-background-light,
+    $selection-highlighting-color,
+    20%
+  );
 
   .app--dark & {
-    background-color: mix($editor-background-dark, $selection-highlighting-color, 20%);
+    background-color: mix(
+      $editor-background-dark,
+      $selection-highlighting-color,
+      20%
+    );
   }
 
   * {
@@ -377,8 +398,21 @@ textarea {
   body > .app > .layout > .layout__panel,
   body > .app > .layout > .layout__panel > .layout__panel,
   body > .app > .layout > .layout__panel > .layout__panel > .layout__panel,
-  body > .app > .layout > .layout__panel > .layout__panel > .layout__panel > .layout__panel--preview,
-  body > .app > .layout > .layout__panel > .layout__panel > .layout__panel > .layout__panel--preview div {
+  body
+    > .app
+    > .layout
+    > .layout__panel
+    > .layout__panel
+    > .layout__panel
+    > .layout__panel--preview,
+  body
+    > .app
+    > .layout
+    > .layout__panel
+    > .layout__panel
+    > .layout__panel
+    > .layout__panel--preview
+    div {
     background-color: transparent !important;
     display: block !important;
     height: auto !important;
@@ -392,4 +426,21 @@ textarea {
     padding: 0 50px !important;
   }
   // scss-lint:enable ImportantRule
+}
+
+.tour-step__inner {
+  background-color: $blue !important;
+  color: white;
+}
+.navigation-bar--editor {
+  background-color: $blue;
+}
+.icon-provider--stackedit {
+  background-image: url("../assets/icon.png");
+}
+.token {
+  color: $blue;
+}
+.layout__panel--status-bar {
+  background-color: $blue !important;
 }

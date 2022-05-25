@@ -84,9 +84,7 @@ export default {
     editingName: '',
   }),
   computed: {
-    ...mapGetters('modal', [
-      'config',
-    ]),
+    ...mapGetters('modal', ['config']),
     isReadOnly() {
       return this.templates[this.selectedId].isAdditional;
     },
@@ -113,11 +111,15 @@ export default {
       },
       { immediate: true },
     );
-    this.$watch('selectedId', (selectedId) => {
-      const template = this.templates[selectedId];
-      this.showHelpers = template.helpers !== emptyTemplateHelpers;
-      this.editingName = template.name;
-    }, { immediate: true });
+    this.$watch(
+      'selectedId',
+      (selectedId) => {
+        const template = this.templates[selectedId];
+        this.showHelpers = template.helpers !== emptyTemplateHelpers;
+        this.editingName = template.name;
+      },
+      { immediate: true },
+    );
   },
   methods: {
     create() {
@@ -150,7 +152,8 @@ export default {
       } else {
         this.editingName = template.name;
       }
-      setTimeout(() => { // For the form-entry to get the blur event
+      setTimeout(() => {
+        // For the form-entry to get the blur event
         this.isEditing = false;
       }, 1);
     },
@@ -158,12 +161,10 @@ export default {
       const oldTemplateIds = Object.keys(store.getters['data/templatesById']);
       await store.dispatch('data/setTemplatesById', this.templates);
       const newTemplateIds = Object.keys(store.getters['data/templatesById']);
-      const createdCount = newTemplateIds
-        .filter(id => !oldTemplateIds.includes(id))
-        .length;
-      const removedCount = oldTemplateIds
-        .filter(id => !newTemplateIds.includes(id))
-        .length;
+      // eslint-disable-next-line arrow-parens
+      const createdCount = newTemplateIds.filter((id) => !oldTemplateIds.includes(id)).length;
+      // eslint-disable-next-line arrow-parens
+      const removedCount = oldTemplateIds.filter((id) => !newTemplateIds.includes(id)).length;
       if (createdCount) {
         badgeSvc.addBadge('addTemplate');
       }

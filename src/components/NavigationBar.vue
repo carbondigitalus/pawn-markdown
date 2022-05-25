@@ -2,13 +2,13 @@
   <nav class="navigation-bar" :class="{'navigation-bar--editor': styles.showEditor && !revisionContent, 'navigation-bar--light': light}">
     <!-- Explorer -->
     <div class="navigation-bar__inner navigation-bar__inner--left navigation-bar__inner--button">
-      <button class="navigation-bar__button navigation-bar__button--close button" v-if="light" @click="close()" v-title="'Close StackEdit'"><icon-check-circle></icon-check-circle></button>
+      <button class="navigation-bar__button navigation-bar__button--close button" v-if="light" @click="close()" v-title="'Close PawnMD'"><icon-check-circle></icon-check-circle></button>
       <button class="navigation-bar__button navigation-bar__button--explorer-toggler button" v-else tour-step-anchor="explorer" @click="toggleExplorer()" v-title="'Toggle explorer'"><icon-folder></icon-folder></button>
     </div>
     <!-- Side bar -->
     <div class="navigation-bar__inner navigation-bar__inner--right navigation-bar__inner--button">
-      <a class="navigation-bar__button navigation-bar__button--stackedit button" v-if="light" href="app" target="_blank" v-title="'Open StackEdit'"><icon-provider provider-id="stackedit"></icon-provider></a>
-      <button class="navigation-bar__button navigation-bar__button--stackedit button" v-else tour-step-anchor="menu" @click="toggleSideBar()" v-title="'Toggle side bar'"><icon-provider provider-id="stackedit"></icon-provider></button>
+      <a class="navigation-bar__button navigation-bar__button--stackedit button" v-if="light" href="app" target="_blank" v-title="'Open PawnMD'"><icon-provider provider-id="stackedit"></icon-provider></a>
+      <button class="navigation-bar__button navigation-bar__button--pawnmd button" v-else tour-step-anchor="menu" @click="toggleSideBar()" v-title="'Toggle side bar'"><icon-provider provider-id="pawnmd"></icon-provider></button>
     </div>
     <div class="navigation-bar__inner navigation-bar__inner--right navigation-bar__inner--title flex flex--row">
       <!-- Spinner -->
@@ -66,13 +66,18 @@ const getShortcut = (method) => {
   let result = '';
   Object.entries(store.getters['data/computedSettings'].shortcuts).some(([keys, shortcut]) => {
     if (`${shortcut.method || shortcut}` === method) {
-      result = keys.split('+').map(key => key.toLowerCase()).map((key) => {
-        if (key === 'mod') {
-          return mod;
-        }
-        // Capitalize
-        return key && `${key[0].toUpperCase()}${key.slice(1)}`;
-      }).join('+');
+      result = keys
+        .split('+')
+        // eslint-disable-next-line arrow-parens
+        .map((key) => key.toLowerCase())
+        .map((key) => {
+          if (key === 'mod') {
+            return mod;
+          }
+          // Capitalize
+          return key && `${key[0].toUpperCase()}${key.slice(1)}`;
+        })
+        .join('+');
     }
     return result;
   });
@@ -87,25 +92,11 @@ export default {
     titleHover: false,
   }),
   computed: {
-    ...mapState([
-      'light',
-      'offline',
-    ]),
-    ...mapState('queue', [
-      'isSyncRequested',
-      'isPublishRequested',
-      'currentLocation',
-    ]),
-    ...mapState('layout', [
-      'canUndo',
-      'canRedo',
-    ]),
-    ...mapState('content', [
-      'revisionContent',
-    ]),
-    ...mapGetters('layout', [
-      'styles',
-    ]),
+    ...mapState(['light', 'offline']),
+    ...mapState('queue', ['isSyncRequested', 'isPublishRequested', 'currentLocation']),
+    ...mapState('layout', ['canUndo', 'canRedo']),
+    ...mapState('content', ['revisionContent']),
+    ...mapGetters('layout', ['styles']),
     ...mapGetters('syncLocation', {
       syncLocations: 'current',
     }),
@@ -113,15 +104,15 @@ export default {
       publishLocations: 'current',
     }),
     pagedownButtons() {
-      return pagedownButtons.map(button => ({
+      // eslint-disable-next-line arrow-parens
+      return pagedownButtons.map((button) => ({
         ...button,
         titleWithShortcut: `${button.title}${getShortcut(button.method)}`,
         iconClass: `icon-${button.icon}`,
       }));
     },
     isSyncPossible() {
-      return store.getters['workspace/syncToken'] ||
-        store.getters['syncLocation/current'].length;
+      return store.getters['workspace/syncToken'] || store.getters['syncLocation/current'].length;
     },
     showSpinner() {
       return !store.state.queue.isEmpty;
@@ -139,13 +130,15 @@ export default {
       if (this.titleInputElt) {
         if (result) {
           const scrollLeft = this.titleInputElt.scrollWidth - this.titleInputElt.offsetWidth;
-          animationSvc.animate(this.titleInputElt)
+          animationSvc
+            .animate(this.titleInputElt)
             .scrollLeft(scrollLeft)
             .duration(scrollLeft * 10)
             .easing('inOut')
             .start();
         } else {
-          animationSvc.animate(this.titleInputElt)
+          animationSvc
+            .animate(this.titleInputElt)
             .scrollLeft(0)
             .start();
         }
@@ -154,23 +147,13 @@ export default {
     },
     editCancelTrigger() {
       const current = store.getters['file/current'];
-      return utils.serializeObject([
-        current.id,
-        current.name,
-      ]);
+      return utils.serializeObject([current.id, current.name]);
     },
   },
   methods: {
-    ...mapMutations('content', [
-      'setRevisionContent',
-    ]),
-    ...mapActions('content', [
-      'restoreRevision',
-    ]),
-    ...mapActions('data', [
-      'toggleExplorer',
-      'toggleSideBar',
-    ]),
+    ...mapMutations('content', ['setRevisionContent']),
+    ...mapActions('content', ['restoreRevision']),
+    ...mapActions('data', ['toggleExplorer', 'toggleSideBar']),
     undo() {
       return editorSvc.clEditor.undoMgr.undo();
     },
@@ -309,7 +292,7 @@ export default {
     padding: 0 4px;
     width: 38px;
 
-    &.navigation-bar__button--stackedit {
+    &.navigation-bar__button--pawnmd {
       opacity: 0.85;
 
       &:active,
@@ -488,7 +471,7 @@ $t: 3000ms;
 
   &::before,
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     display: block;
     width: $b;

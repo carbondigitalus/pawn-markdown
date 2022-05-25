@@ -72,14 +72,13 @@ export default modalTemplate({
     openFolder() {
       return store.dispatch(
         'modal/hideUntil',
-        googleHelper.openPicker(this.config.token, 'folder')
-          .then((folders) => {
-            if (folders[0]) {
-              store.dispatch('data/patchLocalSettings', {
-                googleDriveFolderId: folders[0].id,
-              });
-            }
-          }),
+        googleHelper.openPicker(this.config.token, 'folder').then((folders) => {
+          if (folders[0]) {
+            store.dispatch('data/patchLocalSettings', {
+              googleDriveFolderId: folders[0].id,
+            });
+          }
+        }),
       );
     },
     resolve() {

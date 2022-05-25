@@ -4,8 +4,8 @@
       <div class="modal__image">
         <icon-key></icon-key>
       </div>
-      <p v-if="entries.length">StackEdit has access to the following external accounts:</p>
-      <p v-else>StackEdit has no access to any external account yet.</p>
+      <p v-if="entries.length">PawnMD has access to the following external accounts:</p>
+      <p v-else>PawnMD has no access to any external account yet.</p>
       <div>
         <div class="account-entry flex flex--column" v-for="entry in entries" :key="entry.token.sub">
           <div class="account-entry__header flex flex--row flex--align-center">
@@ -96,39 +96,46 @@ export default {
     MenuEntry,
   },
   computed: {
-    ...mapGetters('modal', [
-      'config',
-    ]),
+    ...mapGetters('modal', ['config']),
     entries() {
       return [
-        ...Object.values(store.getters['data/googleTokensBySub']).map(token => ({
+        // eslint-disable-next-line arrow-parens
+        ...Object.values(store.getters['data/googleTokensBySub']).map((token) => ({
           token,
           providerId: 'google',
           userId: token.sub,
           name: token.name,
-          scopes: ['openid', 'profile', ...token.scopes
-            .map(scope => scope.replace(/^https:\/\/www.googleapis.com\/auth\//, ''))],
+          scopes: [
+            'openid',
+            'profile',
+            // eslint-disable-next-line arrow-parens
+            ...token.scopes.map((scope) => scope.replace(/^https:\/\/www.googleapis.com\/auth\//, '')),
+          ],
         })),
-        ...Object.values(store.getters['data/couchdbTokensBySub']).map(token => ({
+        // eslint-disable-next-line arrow-parens
+        ...Object.values(store.getters['data/couchdbTokensBySub']).map((token) => ({
           token,
           providerId: 'couchdb',
           url: token.dbUrl,
           name: token.name,
         })),
-        ...Object.values(store.getters['data/dropboxTokensBySub']).map(token => ({
+        // eslint-disable-next-line arrow-parens
+        ...Object.values(store.getters['data/dropboxTokensBySub']).map((token) => ({
           token,
           providerId: 'dropbox',
           userId: token.sub,
           name: token.name,
         })),
-        ...Object.values(store.getters['data/githubTokensBySub']).map(token => ({
+        // eslint-disable-next-line arrow-parens
+        ...Object.values(store.getters['data/githubTokensBySub']).map((token) => ({
           token,
           providerId: 'github',
           userId: token.sub,
           name: token.name,
           scopes: token.scopes,
         })),
-        ...Object.values(store.getters['data/gitlabTokensBySub']).map(token => ({
+        // eslint-disable-next-line arrow-parens
+        ...Object.values(store.getters['data/gitlabTokensBySub']).map((token) => ({
           token,
           providerId: 'gitlab',
           url: token.serverUrl,
@@ -136,14 +143,16 @@ export default {
           name: token.name,
           scopes: ['api'],
         })),
-        ...Object.values(store.getters['data/wordpressTokensBySub']).map(token => ({
+        // eslint-disable-next-line arrow-parens
+        ...Object.values(store.getters['data/wordpressTokensBySub']).map((token) => ({
           token,
           providerId: 'wordpress',
           userId: token.sub,
           name: token.name,
           scopes: ['global'],
         })),
-        ...Object.values(store.getters['data/zendeskTokensBySub']).map(token => ({
+        // eslint-disable-next-line arrow-parens
+        ...Object.values(store.getters['data/zendeskTokensBySub']).map((token) => ({
           token,
           providerId: 'zendesk',
           url: `https://${token.subdomain}.zendesk.com/`,
@@ -166,47 +175,63 @@ export default {
     async addBloggerAccount() {
       try {
         await googleHelper.addBloggerAccount();
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addDropboxAccount() {
       try {
         await store.dispatch('modal/open', { type: 'dropboxAccount' });
         await dropboxHelper.addAccount(!store.getters['data/localSettings'].dropboxRestrictedAccess);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addGithubAccount() {
       try {
         await store.dispatch('modal/open', { type: 'githubAccount' });
         await githubHelper.addAccount(store.getters['data/localSettings'].githubRepoFullAccess);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addGitlabAccount() {
       try {
         const { serverUrl, applicationId } = await store.dispatch('modal/open', { type: 'gitlabAccount' });
         await gitlabHelper.addAccount(serverUrl, applicationId);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addGoogleDriveAccount() {
       try {
         await store.dispatch('modal/open', { type: 'googleDriveAccount' });
         await googleHelper.addDriveAccount(!store.getters['data/localSettings'].googleDriveRestrictedAccess);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addGooglePhotosAccount() {
       try {
         await googleHelper.addPhotosAccount();
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addWordpressAccount() {
       try {
         await wordpressHelper.addAccount();
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async addZendeskAccount() {
       try {
         const { subdomain, clientId } = await store.dispatch('modal/open', { type: 'zendeskAccount' });
         await zendeskHelper.addAccount(subdomain, clientId);
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
   },
 };

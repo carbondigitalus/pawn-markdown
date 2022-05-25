@@ -46,7 +46,7 @@ export default modalTemplate({
       const { selectedFormat } = this;
       store.dispatch('queue/enqueue', async () => {
         const tokenToRefresh = store.getters['workspace/sponsorToken'];
-        const sponsorToken = tokenToRefresh && await googleHelper.refreshToken(tokenToRefresh);
+        const sponsorToken = tokenToRefresh && (await googleHelper.refreshToken(tokenToRefresh));
 
         try {
           const { body } = await networkSvc.request({

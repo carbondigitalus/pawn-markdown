@@ -50,12 +50,8 @@ export default modalTemplate({
         this.setError('filename');
       } else {
         // Return new location
-        const location = gistProvider.makeLocation(
-          this.config.token,
-          this.filename,
-          this.isPublic,
-          this.gistId,
-        );
+        // eslint-disable-next-line max-len
+        const location = gistProvider.makeLocation(this.config.token, this.filename, this.isPublic, this.gistId);
         this.config.resolve(location);
       }
     },

@@ -36,22 +36,25 @@ export default modalTemplate({
     openFolder() {
       return store.dispatch(
         'modal/hideUntil',
-        googleHelper.openPicker(this.config.token, 'folder')
-          .then((folders) => {
-            if (folders[0]) {
-              store.dispatch('data/patchLocalSettings', {
-                googleDriveWorkspaceFolderId: folders[0].id,
-              });
-            }
-          }),
+        googleHelper.openPicker(this.config.token, 'folder').then((folders) => {
+          if (folders[0]) {
+            store.dispatch('data/patchLocalSettings', {
+              googleDriveWorkspaceFolderId: folders[0].id,
+            });
+          }
+        }),
       );
     },
     resolve() {
-      const url = utils.addQueryParams('app', {
-        providerId: 'googleDriveWorkspace',
-        folderId: this.folderId,
-        sub: this.config.token.sub,
-      }, true);
+      const url = utils.addQueryParams(
+        'app',
+        {
+          providerId: 'googleDriveWorkspace',
+          folderId: this.folderId,
+          sub: this.config.token.sub,
+        },
+        true,
+      );
       this.config.resolve();
       window.open(url);
     },

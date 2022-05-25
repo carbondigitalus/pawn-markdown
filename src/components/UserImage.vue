@@ -20,7 +20,8 @@ export default {
   },
   watch: {
     sanitizedUserId: {
-      handler: sanitizedUserId => userSvc.addUserId(sanitizedUserId),
+      // eslint-disable-next-line arrow-parens
+      handler: (sanitizedUserId) => userSvc.addUserId(sanitizedUserId),
       immediate: true,
     },
   },

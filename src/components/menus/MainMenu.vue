@@ -115,7 +115,7 @@
     </menu-entry>
     <menu-entry @click.native="about">
       <icon-help-circle slot="icon"></icon-help-circle>
-      About StackEdit
+      About PawnMD
     </menu-entry>
   </div>
 </template>
@@ -136,11 +136,7 @@ export default {
     UserImage,
   },
   computed: {
-    ...mapGetters('workspace', [
-      'currentWorkspace',
-      'syncToken',
-      'loginToken',
-    ]),
+    ...mapGetters('workspace', ['currentWorkspace', 'syncToken', 'loginToken']),
     userId() {
       return userSvc.getCurrentUserId();
     },
@@ -161,11 +157,17 @@ export default {
       return Object.keys(store.getters['data/allTemplatesById']).length;
     },
     accountCount() {
-      return Object.values(store.getters['data/tokensByType'])
-        .reduce((count, tokensBySub) => count + Object.values(tokensBySub).length, 0);
+      return Object.values(store.getters['data/tokensByType']).reduce(
+        (count, tokensBySub) => count + Object.values(tokensBySub).length,
+        0,
+      );
     },
     badgeCount() {
-      return store.getters['data/allBadges'].filter(badge => badge.isEarned).length;
+      // eslint-disable-next-line array-callback-return
+      return store.getters['data/allBadges'].filter((badge) => {
+        // eslint-disable-next-line no-unused-expressions
+        badge.isEarned;
+      }).length;
     },
     featureCount() {
       return store.getters['data/allBadges'].length;
@@ -196,29 +198,39 @@ export default {
     async settings() {
       try {
         await store.dispatch('modal/open', 'settings');
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
     async templates() {
       try {
         await store.dispatch('modal/open', 'templates');
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
     async accounts() {
       try {
         await store.dispatch('modal/open', 'accountManagement');
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
     async badges() {
       try {
         await store.dispatch('modal/open', 'badgeManagement');
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
     async reset() {
       try {
         await store.dispatch('modal/open', 'reset');
-        localStorage.setItem('resetStackEdit', '1');
+        localStorage.setItem('resetPawnMD', '1');
         window.location.reload();
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
     about() {
       store.dispatch('modal/open', 'about');

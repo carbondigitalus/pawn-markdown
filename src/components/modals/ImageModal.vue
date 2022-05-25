@@ -38,9 +38,12 @@ export default modalTemplate({
   computed: {
     googlePhotosTokens() {
       const googleTokensBySub = store.getters['data/googleTokensBySub'];
-      return Object.values(googleTokensBySub)
-        .filter(token => token.isPhotos)
-        .sort((token1, token2) => token1.name.localeCompare(token2.name));
+      return (
+        Object.values(googleTokensBySub)
+          // eslint-disable-next-line arrow-parens
+          .filter((token) => token.isPhotos)
+          .sort((token1, token2) => token1.name.localeCompare(token2.name))
+      );
     },
   },
   methods: {
@@ -62,7 +65,9 @@ export default modalTemplate({
     async addGooglePhotosAccount() {
       try {
         await googleHelper.addPhotosAccount();
-      } catch (e) { /* cancel */ }
+      } catch (e) {
+        /* cancel */
+      }
     },
     async openGooglePhotos(token) {
       const { callback } = this.config;

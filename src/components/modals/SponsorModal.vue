@@ -43,22 +43,21 @@ export default {
     };
 
     return {
-      buttons: sponsorToken ? [
-        makeButton('QD7SFZS79D2AL', '$5', '3 months sponsorship'),
-        makeButton('WG64NCFL9TQZJ', '$15', '1 year sponsorship', '-25%'),
-        makeButton('G2E7MN873EQ3U', '$25', '2 years sponsorship', '-37%'),
-        makeButton('JQJT7ARKYC7FC', '$50', '5 years sponsorship', '-50%'),
-      ] : [],
+      buttons: sponsorToken
+        ? [
+            makeButton('QD7SFZS79D2AL', '$5', '3 months sponsorship'), // eslint-disable-line
+            makeButton('WG64NCFL9TQZJ', '$15', '1 year sponsorship', '-25%'), // eslint-disable-line
+            makeButton('G2E7MN873EQ3U', '$25', '2 years sponsorship', '-37%'), // eslint-disable-line
+            makeButton('JQJT7ARKYC7FC', '$50', '5 years sponsorship', '-50%'), // eslint-disable-line
+          ] // eslint-disable-line
+        : [],
     };
   },
   computed: {
-    ...mapGetters('modal', [
-      'config',
-    ]),
+    ...mapGetters('modal', ['config']),
   },
   methods: {
-    sponsor() {
-    },
+    sponsor() {},
   },
 };
 </script>

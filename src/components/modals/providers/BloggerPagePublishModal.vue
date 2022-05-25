@@ -53,11 +53,8 @@ export default modalTemplate({
         this.setError('blogUrl');
       } else {
         // Return new location
-        const location = bloggerPageProvider.makeLocation(
-          this.config.token,
-          this.blogUrl,
-          this.pageId,
-        );
+        // eslint-disable-next-line max-len
+        const location = bloggerPageProvider.makeLocation(this.config.token, this.blogUrl, this.pageId);
         location.templateId = this.selectedTemplate;
         this.config.resolve(location);
       }

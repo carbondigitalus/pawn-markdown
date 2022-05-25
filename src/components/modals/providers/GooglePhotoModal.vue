@@ -36,9 +36,7 @@ export default {
     thumbnailUrl() {
       return `url(${makeThumbnail(this.config.url, 320)})`;
     },
-    ...mapGetters('modal', [
-      'config',
-    ]),
+    ...mapGetters('modal', ['config']),
   },
   methods: {
     resolve() {

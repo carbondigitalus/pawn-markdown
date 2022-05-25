@@ -37,20 +37,14 @@ export default {
     UserImage,
   },
   computed: {
-    ...mapGetters('workspace', [
-      'loginToken',
-    ]),
+    ...mapGetters('workspace', ['loginToken']),
     userId() {
       return userSvc.getCurrentUserId();
     },
   },
   methods: {
-    ...mapMutations('discussion', [
-      'setNewCommentFocus',
-    ]),
-    ...mapActions('discussion', [
-      'cancelNewComment',
-    ]),
+    ...mapMutations('discussion', ['setNewCommentFocus']),
+    ...mapActions('discussion', ['cancelNewComment']),
     addComment() {
       const text = store.state.discussion.newCommentText.trim();
       if (text.length) {
@@ -93,12 +87,15 @@ export default {
     const scrollerElt = this.$el.querySelector('.comment__text-inner');
     const clEditor = cledit(preElt, scrollerElt, true);
     clEditor.init({
-      sectionHighlighter: section => Prism.highlight(
-        section.text,
-        editorSvc.prismGrammars[section.data],
-      ),
-      sectionParser: text => markdownConversionSvc
-        .parseSections(editorSvc.converter, text).sections,
+      // eslint-disable-next-line max-len
+      sectionHighlighter: (section) => {
+        Prism.highlight(section.text, editorSvc.prismGrammars[section.data]);
+      },
+      // eslint-disable-next-line max-len
+      sectionParser: (text) => {
+        // eslint-disable-next-line no-unused-expressions
+        markdownConversionSvc.parseSections(editorSvc.converter, text).sections;
+      },
       content: store.state.discussion.newCommentText,
       selectionStart: store.state.discussion.newCommentSelection.start,
       selectionEnd: store.state.discussion.newCommentSelection.end,
@@ -107,23 +104,30 @@ export default {
     clEditor.on('focus', () => this.setNewCommentFocus(true));
 
     // Save typed content and selection
-    clEditor.on('contentChanged', value =>
-      store.commit('discussion/setNewCommentText', value));
-    clEditor.selectionMgr.on('selectionChanged', (start, end) =>
-      store.commit('discussion/setNewCommentSelection', {
-        start, end,
-      }));
+    clEditor.on('contentChanged', (value) => {
+      store.commit('discussion/setNewCommentText', value);
+    });
+    clEditor.selectionMgr.on(
+      'selectionChanged',
+      (start, end) =>
+        store.commit('discussion/setNewCommentSelection', {
+          start,
+          end,
+        }),
+      // eslint-disable-next-line function-paren-newline
+    );
 
     const isSticky = this.$el.parentNode.classList.contains('sticky-comment');
     const isVisible = () => isSticky || store.state.discussion.stickyComment === null;
 
     this.$watch(
       () => store.state.discussion.currentDiscussionId,
-      () => this.$nextTick(() => {
-        if (isVisible() && store.state.discussion.newCommentFocus) {
-          clEditor.focus();
-        }
-      }),
+      () =>
+        this.$nextTick(() => {
+          if (isVisible() && store.state.discussion.newCommentFocus) {
+            clEditor.focus();
+          }
+        }),
       { immediate: true },
     );
 
@@ -158,9 +162,15 @@ export default {
         },
         { immediate: true },
       );
+
       this.$watch(
-        () => store.state.discussion.newCommentText,
-        newCommentText => clEditor.setContent(newCommentText),
+        () => {
+          // eslint-disable-next-line no-unused-expressions
+          store.state.discussion.newCommentText;
+        },
+        (newCommentText) => {
+          clEditor.setContent(newCommentText);
+        },
       );
     }
   },

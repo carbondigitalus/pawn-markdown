@@ -41,10 +41,7 @@ export default {
     StickyComment,
   },
   computed: {
-    ...mapState('discussion', [
-      'stickyComment',
-      'currentDiscussionId',
-    ]),
+    ...mapState('discussion', ['stickyComment', 'currentDiscussionId']),
     ...mapGetters('discussion', [
       'currentDiscussion',
       'previousDiscussionId',
@@ -52,9 +49,7 @@ export default {
       'currentFileDiscussions',
       'currentDiscussionLastCommentId',
     ]),
-    ...mapGetters('layout', [
-      'constants',
-    ]),
+    ...mapGetters('layout', ['constants']),
     text() {
       return markdownConversionSvc.highlight(this.currentDiscussion.text);
     },
@@ -66,12 +61,8 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('discussion', [
-      'setCurrentDiscussionId',
-    ]),
-    ...mapActions('notification', [
-      'info',
-    ]),
+    ...mapMutations('discussion', ['setCurrentDiscussionId']),
+    ...mapActions('notification', ['info']),
     goToDiscussion(discussionId = this.currentDiscussionId) {
       this.setCurrentDiscussionId(discussionId);
       const layoutSettings = store.getters['data/layoutSettings'];
@@ -85,14 +76,16 @@ export default {
         const scrollerElt = layoutSettings.showEditor
           ? editorSvc.editorElt.parentNode
           : editorSvc.previewElt.parentNode;
-        let scrollTop = coordinates.top - (scrollerElt.offsetHeight / 2);
+        // eslint-disable-next-line no-mixed-operators
+        let scrollTop = coordinates.top - scrollerElt.offsetHeight / 2;
         const maxScrollTop = scrollerElt.scrollHeight - scrollerElt.offsetHeight;
         if (scrollTop < 0) {
           scrollTop = 0;
         } else if (scrollTop > maxScrollTop) {
           scrollTop = maxScrollTop;
         }
-        animationSvc.animate(scrollerElt)
+        animationSvc
+          .animate(scrollerElt)
           .scrollTop(scrollTop)
           .duration(200)
           .start();

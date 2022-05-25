@@ -44,10 +44,7 @@ export default {
     MenuEntry,
   },
   computed: {
-    ...mapGetters('workspace', [
-      'workspacesById',
-      'currentWorkspace',
-    ]),
+    ...mapGetters('workspace', ['workspacesById', 'currentWorkspace']),
     workspaceCount() {
       return Object.keys(this.workspacesById).length;
     },
@@ -58,14 +55,18 @@ export default {
         store.dispatch('modal/open', {
           type: 'couchdbWorkspace',
         });
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
     async addGithubWorkspace() {
       try {
         store.dispatch('modal/open', {
           type: 'githubWorkspace',
         });
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
     async addGitlabWorkspace() {
       try {
@@ -75,7 +76,9 @@ export default {
           type: 'gitlabWorkspace',
           token,
         });
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
     async addGoogleDriveWorkspace() {
       try {
@@ -84,12 +87,16 @@ export default {
           type: 'googleDriveWorkspace',
           token,
         });
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
     manageWorkspaces() {
       try {
         store.dispatch('modal/open', 'workspaceManagement');
-      } catch (e) { /* Cancel */ }
+      } catch (e) {
+        /* Cancel */
+      }
     },
   },
 };

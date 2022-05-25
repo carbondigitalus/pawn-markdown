@@ -4,7 +4,7 @@
       <div class="modal__image">
         <icon-provider provider-id="gitlab"></icon-provider>
       </div>
-      <p>Link your <b>GitLab</b> account to <b>StackEdit</b>.</p>
+      <p>Link your <b>GitLab</b> account to <b>PawnMD</b>.</p>
       <form-entry label="GitLab URL" error="serverUrl">
         <input v-if="config.forceServerUrl" slot="field" class="textfield" type="text" disabled="disabled" v-model="config.forceServerUrl">
         <input v-else slot="field" class="textfield" type="text" v-model.trim="serverUrl" @keydown.enter="resolve()">

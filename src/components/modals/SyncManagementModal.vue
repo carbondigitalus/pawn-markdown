@@ -57,9 +57,7 @@ export default {
     ModalInner,
   },
   computed: {
-    ...mapGetters('modal', [
-      'config',
-    ]),
+    ...mapGetters('modal', ['config']),
     ...mapGetters('syncLocation', {
       syncLocations: 'currentWithWorkspaceSyncLocation',
     }),
@@ -68,9 +66,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('notification', [
-      'info',
-    ]),
+    ...mapActions('notification', ['info']),
     remove(location) {
       if (location.id === 'main') {
         this.info('This location can not be removed.');

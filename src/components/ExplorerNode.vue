@@ -53,8 +53,7 @@ export default {
       return store.state.explorer.openNodes[this.node.item.id] || this.node.isRoot;
     },
     newChild() {
-      return store.getters['explorer/newChildNodeParent'] === this.node
-        && store.state.explorer.newChildNode;
+      return store.getters['explorer/newChildNodeParent'] === this.node && store.state.explorer.newChildNode;
     },
     newChildName: {
       get() {
@@ -74,12 +73,8 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('explorer', [
-      'setEditingId',
-    ]),
-    ...mapActions('explorer', [
-      'setDragTarget',
-    ]),
+    ...mapMutations('explorer', ['setEditingId']),
+    ...mapActions('explorer', ['setDragTarget']),
     select(id = this.node.item.id, doOpen = true) {
       const node = store.getters['explorer/nodeMap'][id];
       if (!node) {
@@ -148,10 +143,7 @@ export default {
       const sourceNode = store.getters['explorer/dragSourceNode'];
       const targetNode = store.getters['explorer/dragTargetNodeFolder'];
       this.setDragTarget();
-      if (!sourceNode.isNil
-        && !targetNode.isNil
-        && sourceNode.item.id !== targetNode.item.id
-      ) {
+      if (!sourceNode.isNil && !targetNode.isNil && sourceNode.item.id !== targetNode.item.id) {
         workspaceSvc.storeItem({
           ...sourceNode.item,
           parentId: targetNode.item.id,
@@ -168,24 +160,30 @@ export default {
             left: evt.clientX,
             top: evt.clientY,
           },
-          items: [{
-            name: 'New file',
-            disabled: !this.node.isFolder || this.node.isTrash,
-            perform: () => explorerSvc.newItem(false),
-          }, {
-            name: 'New folder',
-            disabled: !this.node.isFolder || this.node.isTrash || this.node.isTemp,
-            perform: () => explorerSvc.newItem(true),
-          }, {
-            type: 'separator',
-          }, {
-            name: 'Rename',
-            disabled: this.node.isTrash || this.node.isTemp,
-            perform: () => this.setEditingId(this.node.item.id),
-          }, {
-            name: 'Delete',
-            perform: () => explorerSvc.deleteItem(),
-          }],
+          items: [
+            {
+              name: 'New file',
+              disabled: !this.node.isFolder || this.node.isTrash,
+              perform: () => explorerSvc.newItem(false),
+            },
+            {
+              name: 'New folder',
+              disabled: !this.node.isFolder || this.node.isTrash || this.node.isTemp,
+              perform: () => explorerSvc.newItem(true),
+            },
+            {
+              type: 'separator',
+            },
+            {
+              name: 'Rename',
+              disabled: this.node.isTrash || this.node.isTemp,
+              perform: () => this.setEditingId(this.node.item.id),
+            },
+            {
+              name: 'Delete',
+              perform: () => explorerSvc.deleteItem(),
+            },
+          ],
         });
         if (item) {
           item.perform();

@@ -42,20 +42,10 @@ export default {
     htmlSelection: false,
     line: 0,
     column: 0,
-    textStats: [
-      new Stat('bytes', '[\\s\\S]'),
-      new Stat('words', '\\S+'),
-      new Stat('lines', '\n'),
-    ],
-    htmlStats: [
-      new Stat('characters', '\\S'),
-      new Stat('words', '\\S+'),
-      new Stat('paragraphs', '\\S.*'),
-    ],
+    textStats: [new Stat('bytes', '[\\s\\S]'), new Stat('words', '\\S+'), new Stat('lines', '\n')],
+    htmlStats: [new Stat('characters', '\\S'), new Stat('words', '\\S+'), new Stat('paragraphs', '\\S.*')],
   }),
-  computed: mapGetters('layout', [
-    'styles',
-  ]),
+  computed: mapGetters('layout', ['styles']),
   created() {
     editorSvc.$on('sectionList', () => this.computeText());
     editorSvc.$on('selectionRange', () => this.computeText());

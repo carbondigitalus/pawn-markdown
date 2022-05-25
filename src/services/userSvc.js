@@ -17,8 +17,10 @@ const sanitizeUserId = (userId) => {
   }
   return `go:${userId}`;
 };
-
-const parseUserId = userId => [typesBySubPrefix[userId.slice(0, 2)], userId.slice(3)];
+// eslint-disable-next-line
+const parseUserId = (userId) => {
+  return [typesBySubPrefix[userId.slice(0, 2)], userId.slice(3)];
+};
 
 const refreshUserInfos = () => {
   if (store.state.offline) {

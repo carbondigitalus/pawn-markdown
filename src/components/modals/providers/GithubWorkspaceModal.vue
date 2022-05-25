@@ -50,12 +50,16 @@ export default modalTemplate({
         this.setError('repoUrl');
       } else {
         const path = this.path && this.path.replace(/^\//, '');
-        const url = utils.addQueryParams('app', {
-          ...parsedRepo,
-          providerId: 'githubWorkspace',
-          branch: this.branch || 'master',
-          path: path || undefined,
-        }, true);
+        const url = utils.addQueryParams(
+          'app',
+          {
+            ...parsedRepo,
+            providerId: 'githubWorkspace',
+            branch: this.branch || 'master',
+            path: path || undefined,
+          },
+          true,
+        );
         this.config.resolve();
         window.open(url);
       }

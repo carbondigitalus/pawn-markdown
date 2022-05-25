@@ -8,7 +8,7 @@
       <form-entry label="Database URL" error="dbUrl">
         <input slot="field" class="textfield" type="text" v-model.trim="dbUrl" @keydown.enter="resolve()">
         <div class="form-entry__info">
-          <b>Example:</b> https://instance.smileupps.com/stackedit-workspace
+          <b>Example:</b> 
         </div>
         <div class="form-entry__actions">
           <a href="https://community.stackedit.io/t/couchdb-workspace-setup/" target="_blank">How to setup?</a>
@@ -35,10 +35,14 @@ export default modalTemplate({
       if (!this.dbUrl) {
         this.setError('dbUrl');
       } else {
-        const url = utils.addQueryParams('app', {
-          providerId: 'couchdbWorkspace',
-          dbUrl: this.dbUrl,
-        }, true);
+        const url = utils.addQueryParams(
+          'app',
+          {
+            providerId: 'couchdbWorkspace',
+            dbUrl: this.dbUrl,
+          },
+          true,
+        );
         this.config.resolve();
         window.open(url);
       }

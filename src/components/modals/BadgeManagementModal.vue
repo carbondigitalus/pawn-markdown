@@ -46,14 +46,11 @@ export default {
     shown: {},
   }),
   computed: {
-    ...mapGetters('modal', [
-      'config',
-    ]),
-    ...mapGetters('data', [
-      'badgeTree',
-    ]),
+    ...mapGetters('modal', ['config']),
+    ...mapGetters('data', ['badgeTree']),
     badgeCount() {
-      return store.getters['data/allBadges'].filter(badge => badge.isEarned).length;
+      // eslint-disable-next-line arrow-parens
+      return store.getters['data/allBadges'].filter((badge) => badge.isEarned).length;
     },
     featureCount() {
       return store.getters['data/allBadges'].length;
