@@ -6,8 +6,7 @@ import userSvc from '../userSvc';
 import gitWorkspaceSvc from '../gitWorkspaceSvc';
 import badgeSvc from '../badgeSvc';
 
-const getAbsolutePath = ({ id }) =>
-  `${store.getters['workspace/currentWorkspace'].path || ''}${id}`;
+const getAbsolutePath = ({ id }) => `${store.getters['workspace/currentWorkspace'].path || ''}${id}`;
 
 export default new Provider({
   id: 'githubWorkspace',
@@ -15,12 +14,7 @@ export default new Provider({
   getToken() {
     return store.getters['workspace/syncToken'];
   },
-  getWorkspaceParams({
-    owner,
-    repo,
-    branch,
-    path,
-  }) {
+  getWorkspaceParams({ owner, repo, branch, path }) {
     return {
       providerId: this.id,
       owner,
@@ -29,17 +23,16 @@ export default new Provider({
       path,
     };
   },
-  getWorkspaceLocationUrl({
-    owner,
-    repo,
-    branch,
-    path,
-  }) {
-    return `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/tree/${encodeURIComponent(branch)}/${utils.encodeUrlPath(path)}`;
+  getWorkspaceLocationUrl({ owner, repo, branch, path }) {
+    return `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/tree/${encodeURIComponent(
+      branch,
+    )}/${utils.encodeUrlPath(path)}`;
   },
   getSyncDataUrl({ id }) {
     const { owner, repo, branch } = store.getters['workspace/currentWorkspace'];
-    return `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/tree/${encodeURIComponent(branch)}/${utils.encodeUrlPath(getAbsolutePath({ id }))}`;
+    return `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/tree/${encodeURIComponent(
+      branch,
+    )}/${utils.encodeUrlPath(getAbsolutePath({ id }))}`;
   },
   getSyncDataDescription({ id }) {
     return getAbsolutePath({ id });
@@ -135,12 +128,7 @@ export default new Provider({
       });
     }
   },
-  async downloadWorkspaceContent({
-    token,
-    contentId,
-    contentSyncData,
-    fileSyncData,
-  }) {
+  async downloadWorkspaceContent({ token, contentId, contentSyncData, fileSyncData }) {
     const { sha, data } = await githubHelper.downloadFile({
       ...store.getters['workspace/currentWorkspace'],
       token,
@@ -236,12 +224,7 @@ export default new Provider({
       path: getAbsolutePath({ id: fileSyncDataId }),
     });
 
-    return entries.map(({
-      author,
-      committer,
-      commit,
-      sha,
-    }) => {
+    return entries.map(({ author, committer, commit, sha }) => {
       let user;
       if (author && author.login) {
         user = author;
@@ -250,9 +233,7 @@ export default new Provider({
       }
       const sub = `${githubHelper.subPrefix}:${user.id}`;
       userSvc.addUserInfo({ id: sub, name: user.login, imageUrl: user.avatar_url });
-      const date = (commit.author && commit.author.date)
-        || (commit.committer && commit.committer.date)
-        || 1;
+      const date = (commit.author && commit.author.date) || (commit.committer && commit.committer.date) || 1;
       return {
         id: sha,
         sub,
@@ -264,12 +245,7 @@ export default new Provider({
     // Revisions are already loaded
     return false;
   },
-  async getFileRevisionContent({
-    token,
-    contentId,
-    fileSyncDataId,
-    revisionId,
-  }) {
+  async getFileRevisionContent({ token, contentId, fileSyncDataId, revisionId }) {
     const { data } = await githubHelper.downloadFile({
       ...store.getters['workspace/currentWorkspace'],
       token,
