@@ -17,7 +17,7 @@ export default {
     showItem({ state, commit }, item) {
       const existingItem = utils.someResult(
         state.items,
-        other => other.type === item.type && other.content === item.content && item,
+        (other) => other.type === item.type && other.content === item.content && item,
       );
       if (existingItem) {
         return existingItem.promise;
@@ -25,14 +25,8 @@ export default {
 
       item.promise = new Promise((resolve, reject) => {
         commit('setItems', [...state.items, item]);
-        const removeItem = () => commit(
-          'setItems',
-          state.items.filter(otherItem => otherItem !== item),
-        );
-        setTimeout(
-          () => removeItem(),
-          item.timeout || defaultTimeout,
-        );
+        const removeItem = () => commit('setItems', state.items.filter((otherItem) => otherItem !== item));
+        setTimeout(() => removeItem(), item.timeout || defaultTimeout);
         item.resolve = (res) => {
           removeItem();
           resolve(res);
