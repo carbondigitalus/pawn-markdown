@@ -4,12 +4,16 @@ let lastEarnedFeatureIds = null;
 let debounceTimeoutId;
 
 const showInfo = () => {
-  const earnedBadges = store.getters['data/allBadges']
-    .filter(badge => badge.isEarned && !lastEarnedFeatureIds.has(badge.featureId));
+  const earnedBadges = store.getters['data/allBadges'].filter(
+    (badge) => badge.isEarned && !lastEarnedFeatureIds.has(badge.featureId),
+  );
   if (earnedBadges.length) {
-    store.dispatch('notification/badge', earnedBadges.length > 1
-      ? `You've earned ${earnedBadges.length} badges: ${earnedBadges.map(badge => `"${badge.name}"`).join(', ')}.`
-      : `You've earned 1 badge: "${earnedBadges[0].name}".`);
+    store.dispatch(
+      'notification/badge',
+      earnedBadges.length > 1
+        ? `You've earned ${earnedBadges.length} badges: ${earnedBadges.map((badge) => `"${badge.name}"`).join(', ')}.`
+        : `You've earned 1 badge: "${earnedBadges[0].name}".`,
+    );
   }
   lastEarnedFeatureIds = null;
 };
@@ -19,8 +23,8 @@ export default {
     if (!store.getters['data/badgeCreations'][featureId]) {
       if (!lastEarnedFeatureIds) {
         const earnedFeatureIds = store.getters['data/allBadges']
-          .filter(badge => badge.isEarned)
-          .map(badge => badge.featureId);
+          .filter((badge) => badge.isEarned)
+          .map((badge) => badge.featureId);
         lastEarnedFeatureIds = new Set(earnedFeatureIds);
       }
 
