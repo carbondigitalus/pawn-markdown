@@ -9,17 +9,11 @@ const easings = {
 const vendors = ['moz', 'webkit'];
 for (let x = 0; x < vendors.length && !window.requestAnimationFrame; x += 1) {
   window.requestAnimationFrame = window[`${vendors[x]}RequestAnimationFrame`];
-  window.cancelAnimationFrame = window[`${vendors[x]}CancelAnimationFrame`] ||
-    window[`${vendors[x]}CancelRequestAnimationFrame`];
+  window.cancelAnimationFrame =
+    window[`${vendors[x]}CancelAnimationFrame`] || window[`${vendors[x]}CancelRequestAnimationFrame`];
 }
 
-const transformStyles = [
-  'WebkitTransform',
-  'MozTransform',
-  'msTransform',
-  'OTransform',
-  'transform',
-];
+const transformStyles = ['WebkitTransform', 'MozTransform', 'msTransform', 'OTransform', 'transform'];
 
 const transitionEndEvents = {
   WebkitTransition: 'webkitTransitionEnd',
@@ -102,14 +96,9 @@ const attributes = [
   new TransformAttribute('translateY', 'px', 0, Math.round),
   new TransformAttribute('scale', '', 1),
   new TransformAttribute('rotate', 'deg', 0),
-].concat([
-  'width',
-  'height',
-  'top',
-  'right',
-  'bottom',
-  'left',
-].map(name => new StyleAttribute(name, 'px', 0, Math.round)));
+].concat(
+  ['width', 'height', 'top', 'right', 'bottom', 'left'].map((name) => new StyleAttribute(name, 'px', 0, Math.round)),
+);
 
 class Animation {
   constructor(elt) {
@@ -132,7 +121,7 @@ class Animation {
     this.$start = {};
     this.$end = this.$pending;
     this.$pending = {};
-    this.$attributes = attributes.filter(attribute => attribute.setStart(this));
+    this.$attributes = attributes.filter((attribute) => attribute.setStart(this));
     this.$end.duration = this.$end.duration || 0;
     this.$end.delay = this.$end.delay || 0;
     this.$end.easing = easings[this.$end.easing] || easings.materialOut;
@@ -169,11 +158,7 @@ class Animation {
     let transition = '';
     if (useTransition) {
       progress = 1;
-      const transitions = [
-        'all',
-        `${this.$end.duration}ms`,
-        this.$end.easing.toCSS(),
-      ];
+      const transitions = ['all', `${this.$end.duration}ms`, this.$end.easing.toCSS()];
       if (this.$end.delay) {
         transitions.push(`${this.$end.duration}ms`);
       }
@@ -194,7 +179,7 @@ class Animation {
     const transforms = this.$attributes.reduce((result, attribute) => {
       if (progress < 1) {
         const diff = this.$end[attribute.name] - this.$start[attribute.name];
-        this.$current[attribute.name] = this.$start[attribute.name] + (diff * coeff);
+        this.$current[attribute.name] = this.$start[attribute.name] + diff * coeff;
       } else {
         this.$current[attribute.name] = this.$end[attribute.name];
       }
@@ -217,7 +202,9 @@ class Animation {
   }
 }
 
-attributes.map(attribute => attribute.name).concat('duration', 'easing', 'delay')
+attributes
+  .map((attribute) => attribute.name)
+  .concat('duration', 'easing', 'delay')
   .forEach((name) => {
     Animation.prototype[name] = function setter(val) {
       this.$pending[name] = val;
