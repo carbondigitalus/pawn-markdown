@@ -4,14 +4,16 @@ import badgeSvc from '../../badgeSvc';
 
 const tokenExpirationMargin = 5 * 60 * 1000; // 5 min (WordPress tokens expire after 2 weeks)
 
-const request = (token, options) => networkSvc.request({
-  ...options,
-  headers: {
-    ...options.headers || {},
-    Authorization: `Bearer ${token.accessToken}`,
-  },
-})
-  .then(res => res.body);
+const request = (token, options) =>
+  networkSvc
+    .request({
+      ...options,
+      headers: {
+        ...(options.headers || {}),
+        Authorization: `Bearer ${token.accessToken}`,
+      },
+    })
+    .then((res) => res.body);
 
 export default {
   /**
@@ -32,9 +34,12 @@ export default {
     );
 
     // Call the user info endpoint
-    const body = await request({ accessToken }, {
-      url: 'https://public-api.wordpress.com/rest/v1.1/me',
-    });
+    const body = await request(
+      { accessToken },
+      {
+        url: 'https://public-api.wordpress.com/rest/v1.1/me',
+      },
+    );
 
     // Check the returned sub consistency
     if (sub && `${body.ID}` !== sub) {
@@ -43,7 +48,7 @@ export default {
     // Build token object including scopes and sub
     const token = {
       accessToken,
-      expiresOn: Date.now() + (expiresIn * 1000),
+      expiresOn: Date.now() + expiresIn * 1000,
       name: body.display_name,
       sub: `${body.ID}`,
     };
