@@ -71,10 +71,12 @@ export default new Provider({
   async openFiles(token, paths) {
     await utils.awaitSequence(paths, async (path) => {
       // Check if the file exists and open it
-      if (!Provider.openFileWithLocation({
-        providerId: this.id,
-        path,
-      })) {
+      if (
+        !Provider.openFileWithLocation({
+          providerId: this.id,
+          path,
+        })
+      ) {
         // Download content from Dropbox
         const syncLocation = {
           path,
@@ -99,14 +101,17 @@ export default new Provider({
         if (dotPos > 0 && slashPos < name.length) {
           name = name.slice(0, dotPos);
         }
-        const item = await workspaceSvc.createFile({
-          name,
-          parentId: store.getters['file/current'].parentId,
-          text: content.text,
-          properties: content.properties,
-          discussions: content.discussions,
-          comments: content.comments,
-        }, true);
+        const item = await workspaceSvc.createFile(
+          {
+            name,
+            parentId: store.getters['file/current'].parentId,
+            text: content.text,
+            properties: content.properties,
+            discussions: content.discussions,
+            comments: content.comments,
+          },
+          true,
+        );
         store.commit('file/setCurrentId', item.id);
         workspaceSvc.addSyncLocation({
           ...syncLocation,
@@ -129,7 +134,7 @@ export default new Provider({
       path: makePathRelative(token, syncLocation.path),
       fileId: syncLocation.dropboxFileId,
     });
-    return entries.map(entry => ({
+    return entries.map((entry) => ({
       id: entry.rev,
       sub: `${dropboxHelper.subPrefix}:${(entry.sharing_info || {}).modified_by || token.sub}`,
       created: new Date(entry.server_modified).getTime(),
@@ -139,11 +144,7 @@ export default new Provider({
     // Revision are already loaded
     return false;
   },
-  async getFileRevisionContent({
-    token,
-    contentId,
-    revisionId,
-  }) {
+  async getFileRevisionContent({ token, contentId, revisionId }) {
     const { content } = await dropboxHelper.downloadFile({
       token,
       path: `rev:${revisionId}`,
