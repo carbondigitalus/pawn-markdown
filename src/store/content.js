@@ -40,11 +40,7 @@ module.getters = {
   },
   currentChangeTrigger: (state, getters) => {
     const { current } = getters;
-    return utils.serializeObject([
-      current.id,
-      current.text,
-      current.hash,
-    ]);
+    return utils.serializeObject([current.id, current.text, current.hash]);
   },
   currentProperties: (state, { current }) => utils.computeProperties(current.properties),
   isCurrentEditable: ({ revisionContent }, { current }, rootState, rootGetters) =>
@@ -75,12 +71,7 @@ module.actions = {
       });
     }
   },
-  async restoreRevision({
-    state,
-    getters,
-    commit,
-    dispatch,
-  }) {
+  async restoreRevision({ state, getters, commit, dispatch }) {
     const { revisionContent } = state;
     if (revisionContent) {
       await dispatch('modal/open', 'fileRestoration', { root: true });
@@ -89,8 +80,7 @@ module.actions = {
       const currentContent = utils.deepCopy(getters.current);
       if (currentContent) {
         // Restore text and move discussions
-        const diffs = diffMatchPatch
-          .diff_main(currentContent.text, revisionContent.originalText);
+        const diffs = diffMatchPatch.diff_main(currentContent.text, revisionContent.originalText);
         diffMatchPatch.diff_cleanupSemantic(diffs);
         Object.entries(currentContent.discussions).forEach(([, discussion]) => {
           const adjustOffset = (offsetName) => {
