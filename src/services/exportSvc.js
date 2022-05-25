@@ -42,10 +42,14 @@ export default {
   /**
    * Apply the template to the file content
    */
-  async applyTemplate(fileId, template = {
-    value: '{{{files.0.content.text}}}',
-    helpers: '',
-  }, pdf = false) {
+  async applyTemplate(
+    fileId,
+    template = {
+      value: '{{{files.0.content.text}}}',
+      helpers: '',
+    },
+    pdf = false,
+  ) {
     const file = store.state.file.itemsById[fileId];
     const content = await localDbSvc.loadItem(`${fileId}/content`);
     const properties = utils.computeProperties(content.properties);
@@ -66,7 +70,7 @@ export default {
     });
 
     // Make TOC
-    const headings = containerElt.querySelectorAll('h1,h2,h3,h4,h5,h6').cl_map(headingElt => ({
+    const headings = containerElt.querySelectorAll('h1,h2,h3,h4,h5,h6').cl_map((headingElt) => ({
       title: headingElt.textContent,
       anchor: headingElt.id,
       level: parseInt(headingElt.tagName.slice(1), 10),
@@ -75,16 +79,18 @@ export default {
     const toc = groupHeadings(headings);
     const view = {
       pdf,
-      files: [{
-        name: file.name,
-        content: {
-          text: content.text,
-          properties,
-          yamlProperties: content.properties,
-          html: containerElt.innerHTML,
-          toc,
+      files: [
+        {
+          name: file.name,
+          content: {
+            text: content.text,
+            properties,
+            yamlProperties: content.properties,
+            html: containerElt.innerHTML,
+            toc,
+          },
         },
-      }],
+      ],
     };
     containerElt.innerHTML = '';
 
