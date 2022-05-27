@@ -67,7 +67,6 @@
     "normalize-scss": "^7.0.1",
     "opn": "^6.0.0",
     "prismjs": "^1.28.0",
-    "request": "^2.88.2",
     "rimraf": "^3.0.2",
     "sass-loader": "^13.0.0",
     "semver": "^7.3.7",
