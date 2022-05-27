@@ -64,7 +64,6 @@
     "markdown-it-sup": "^1.0.0",
     "mermaid": "^9.1.1",
     "mousetrap": "^1.6.5",
-    "node-sass": "^7.0.1",
     "normalize-scss": "^7.0.1",
     "npm-bump": "^0.0.32",
     "offline-plugin": "^5.0.7",
