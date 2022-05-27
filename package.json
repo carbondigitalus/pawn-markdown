@@ -50,7 +50,6 @@
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
     "http-proxy-middleware": "^2.0.6",
-    "identity-obj-proxy": "^3.0.0",
     "ignore-loader": "^0.1.2",
     "indexeddbshim": "^10.0.0",
     "js-yaml": "^4.1.0",
