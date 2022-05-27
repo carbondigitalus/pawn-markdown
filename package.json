@@ -14,7 +14,6 @@
     "build-style": "webpack --config build/webpack.style.conf.js",
     "unit": "jest --config test/unit/jest.conf.js --runInBand",
     "unit-with-coverage": "jest --config test/unit/jest.conf.js --runInBand --coverage",
-    "test": "npm run lint && npm run unit",
     "preversion": "npm run test",
     "postversion": "git push origin master --tags && npm publish",
     "patch": "npm version patch -m \"Tag v%s\"",
