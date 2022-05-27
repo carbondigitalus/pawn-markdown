@@ -40,7 +40,6 @@
     "webpack": "^5.72.1"
   },
   "dependencies": {
-    "@vue/test-utils": "^2.0.0",
     "abcjs": "^6.0.2",
     "autoprefixer": "^10.4.7",
     "aws-sdk": "^2.1144.0",
