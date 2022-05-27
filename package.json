@@ -9,20 +9,10 @@
   },
   "main": "index.js",
   "scripts": {
-    "postinstall": "gulp build-prism",
     "start:dev": "node build/dev-server.js",
-    "build": "node build/build.js && npm run build-style",
-    "build-style": "webpack --config build/webpack.style.conf.js",
-    "lint": "eslint --ext .js,.vue src server",
-    "unit": "jest --config test/unit/jest.conf.js --runInBand",
-    "unit-with-coverage": "jest --config test/unit/jest.conf.js --runInBand --coverage",
-    "test": "npm run lint && npm run unit",
-    "preversion": "npm run test",
-    "postversion": "git push origin master --tags && npm publish",
-    "patch": "npm version patch -m \"Tag v%s\"",
-    "minor": "npm version minor -m \"Tag v%s\"",
-    "major": "npm version major -m \"Tag v%s\"",
-    "chart": "mkdir -p dist && rm -rf dist/stackedit && cp -r chart dist/stackedit && sed -i.bak -e s/STACKEDIT_VERSION/$npm_package_version/g dist/stackedit/*.yaml && rm dist/stackedit/*.yaml.bak"
+    "build": "node build/build.js",
+    "test:unit": "jest --config test/unit/jest.conf.js --runInBand",
+    "test:unit:report": "jest --config test/unit/jest.conf.js --runInBand --coverage"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
@@ -40,7 +30,6 @@
   "dependencies": {
     "abcjs": "^6.0.2",
     "autoprefixer": "^10.4.7",
-    "babel-polyfill": "^6.26.0",
     "body-parser": "^1.20.0",
     "chalk": "^5.0.1",
     "clipboard": "^2.0.11",
@@ -66,9 +55,6 @@
     "mousetrap": "^1.6.5",
     "normalize-scss": "^7.0.1",
     "open": "^8.4.0",
-    "prismjs": "^1.28.0",
-    "stylelint": "^14.8.5",
-    "stylelint-config-standard": "^25.0.0",
     "turndown": "^7.1.1",
     "vue": "^3.2.36",
     "vue-loader": "^17.0.0",
@@ -78,10 +64,5 @@
   "engines": {
     "node": "16.14.0",
     "npm": ">=8.3.1"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 10"
-  ]
+  }
 }
