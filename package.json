@@ -14,7 +14,6 @@
     "build-style": "webpack --config build/webpack.style.conf.js",
     "unit": "jest --config test/unit/jest.conf.js --runInBand",
     "unit-with-coverage": "jest --config test/unit/jest.conf.js --runInBand --coverage",
-    "postversion": "git push origin master --tags && npm publish",
     "chart": "mkdir -p dist && rm -rf dist/stackedit && cp -r chart dist/stackedit && sed -i.bak -e s/STACKEDIT_VERSION/$npm_package_version/g dist/stackedit/*.yaml && rm dist/stackedit/*.yaml.bak"
   },
   "devDependencies": {
