@@ -10,7 +10,7 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "node build/dev-server.js",
-    "build": "node build/build.js && npm run build-style",
+    "build": "node build/build.js",
     "test:unit": "jest --config test/unit/jest.conf.js --runInBand",
     "test:unit:report": "jest --config test/unit/jest.conf.js --runInBand --coverage"
   },
