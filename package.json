@@ -40,8 +40,7 @@
     "jest": "^28.1.0",
     "vue-jest": "^3.0.7",
     "webpack": "^5.72.1",
-    "webpack-bundle-analyzer": "^4.5.0",
-    "webpack-pwa-manifest": "^4.3.0"
+    "webpack-bundle-analyzer": "^4.5.0"
   },
   "dependencies": {
     "@vue/compat": "^3.2.36",
