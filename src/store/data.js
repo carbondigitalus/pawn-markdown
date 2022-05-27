@@ -39,27 +39,26 @@ const empty = (id) => {
 const localStorageIdSet = new Set(constants.localStorageDataIds);
 
 // Getter/setter/patcher factories
-const getter = id => (state) => {
-  const itemsById = localStorageIdSet.has(id)
-    ? state.lsItemsById
-    : state.itemsById;
+const getter = (id) => (state) => {
+  const itemsById = localStorageIdSet.has(id) ? state.lsItemsById : state.itemsById;
   if (itemsById[id]) {
     return itemsById[id].data;
   }
   return empty(id).data;
 };
-const setter = id => ({ commit }, data) => commit('setItem', itemTemplate(id, data));
-const patcher = id => ({ state, commit }, data) => {
-  const itemsById = localStorageIdSet.has(id)
-    ? state.lsItemsById
-    : state.itemsById;
+const setter = (id) => ({ commit }, data) => commit('setItem', itemTemplate(id, data));
+const patcher = (id) => ({ state, commit }, data) => {
+  const itemsById = localStorageIdSet.has(id) ? state.lsItemsById : state.itemsById;
   const item = Object.assign(empty(id), itemsById[id]);
   commit('setItem', {
     ...empty(id),
-    data: typeof data === 'object' ? {
-      ...item.data,
-      ...data,
-    } : data,
+    data:
+      typeof data === 'object'
+        ? {
+            ...item.data,
+            ...data,
+          }
+        : data,
   });
 };
 
@@ -79,7 +78,8 @@ const layoutSettingsToggler = (propertyName, featureId) => ({ getters, dispatch 
   toggleLayoutSetting(propertyName, value, featureId, getters, dispatch);
 
 const notEnoughSpace = (layoutConstants, showGutter) =>
-  document.body.clientWidth < layoutConstants.editorMinWidth +
+  document.body.clientWidth <
+  layoutConstants.editorMinWidth +
     layoutConstants.explorerWidth +
     layoutConstants.sideBarWidth +
     layoutConstants.buttonBarWidth +
@@ -101,7 +101,7 @@ const defaultTemplates = {
 };
 
 // For tokens
-const tokenAdder = providerId => ({ getters, dispatch }, token) => {
+const tokenAdder = (providerId) => ({ getters, dispatch }, token) => {
   dispatch('patchTokensByType', {
     [providerId]: {
       ...getters[`${providerId}TokensBySub`],
@@ -122,9 +122,7 @@ export default {
     setItem: ({ itemsById, lsItemsById }, value) => {
       // Create an empty item and override its data field
       const emptyItem = empty(value.id);
-      const data = typeof value.data === 'object'
-        ? Object.assign(emptyItem.data, value.data)
-        : value.data;
+      const data = typeof value.data === 'object' ? Object.assign(emptyItem.data, value.data) : value.data;
 
       // Make item with hash
       const item = utils.addItemHash({
@@ -184,7 +182,7 @@ export default {
         result[currentFileId] = Date.now();
       }
       return Object.keys(result)
-        .filter(id => rootState.file.itemsById[id])
+        .filter((id) => rootState.file.itemsById[id])
         .sort((id1, id2) => result[id2] - result[id1])
         .slice(0, 20);
     },
@@ -215,16 +213,16 @@ export default {
     wordpressTokensBySub: (state, { tokensByType }) => tokensByType.wordpress || {},
     zendeskTokensBySub: (state, { tokensByType }) => tokensByType.zendesk || {},
     badgeCreations: getter('badgeCreations'),
-    badgeTree: (state, { badgeCreations }) => features
-      .map(feature => feature.toBadge(badgeCreations)),
+    badgeTree: (state, { badgeCreations }) => features.map((feature) => feature.toBadge(badgeCreations)),
     allBadges: (state, { badgeTree }) => {
       const result = [];
-      const processBadgeNodes = nodes => nodes.forEach((node) => {
-        result.push(node);
-        if (node.children) {
-          processBadgeNodes(node.children);
-        }
-      });
+      const processBadgeNodes = (nodes) =>
+        nodes.forEach((node) => {
+          result.push(node);
+          if (node.children) {
+            processBadgeNodes(node.children);
+          }
+        });
       processBadgeNodes(badgeTree);
       return result;
     },
@@ -248,7 +246,8 @@ export default {
       toggleLayoutSetting('showSideBar', value, 'toggleSideBar', getters, dispatch);
 
       // Close explorer if not enough space
-      if (getters.layoutSettings.showSideBar &&
+      if (
+        getters.layoutSettings.showSideBar &&
         notEnoughSpace(rootGetters['layout/constants'], rootGetters['discussion/currentDiscussion'])
       ) {
         dispatch('patchLayoutSettings', {
@@ -261,7 +260,8 @@ export default {
       toggleLayoutSetting('showExplorer', value, 'toggleExplorer', getters, dispatch);
 
       // Close side bar if not enough space
-      if (getters.layoutSettings.showExplorer &&
+      if (
+        getters.layoutSettings.showExplorer &&
         notEnoughSpace(rootGetters['layout/constants'], rootGetters['discussion/currentDiscussion'])
       ) {
         dispatch('patchLayoutSettings', {
@@ -269,9 +269,10 @@ export default {
         });
       }
     },
-    setSideBarPanel: ({ dispatch }, value) => dispatch('patchLayoutSettings', {
-      sideBarPanel: value === undefined ? 'menu' : value,
-    }),
+    setSideBarPanel: ({ dispatch }, value) =>
+      dispatch('patchLayoutSettings', {
+        sideBarPanel: value === undefined ? 'menu' : value,
+      }),
     setTemplatesById: ({ commit }, templatesById) => {
       const templatesToCommit = {
         ...templatesById,

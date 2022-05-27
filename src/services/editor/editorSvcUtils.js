@@ -9,11 +9,8 @@ export default {
   /**
    * Get an object describing the position of the scroll bar in the file.
    */
-  getScrollPosition(elt = store.getters['layout/styles'].showEditor
-    ? this.editorElt : this.previewElt) {
-    const dimensionKey = elt === this.editorElt
-      ? 'editorDimension'
-      : 'previewDimension';
+  getScrollPosition(elt = store.getters['layout/styles'].showEditor ? this.editorElt : this.previewElt) {
+    const dimensionKey = elt === this.editorElt ? 'editorDimension' : 'previewDimension';
     const { scrollTop } = elt.parentNode;
     let result;
     if (this.previewCtxMeasured) {
@@ -21,8 +18,8 @@ export default {
         if (scrollTop >= sectionDesc[dimensionKey].endOffset) {
           return false;
         }
-        const posInSection = (scrollTop - sectionDesc[dimensionKey].startOffset) /
-          (sectionDesc[dimensionKey].height || 1);
+        const posInSection =
+          (scrollTop - sectionDesc[dimensionKey].startOffset) / (sectionDesc[dimensionKey].height || 1);
         result = {
           sectionIdx,
           posInSection,
@@ -41,11 +38,11 @@ export default {
     if (scrollPosition && this.previewCtxMeasured) {
       const sectionDesc = this.previewCtxMeasured.sectionDescList[scrollPosition.sectionIdx];
       if (sectionDesc) {
-        const editorScrollTop = sectionDesc.editorDimension.startOffset +
-          (sectionDesc.editorDimension.height * scrollPosition.posInSection);
+        const editorScrollTop =
+          sectionDesc.editorDimension.startOffset + sectionDesc.editorDimension.height * scrollPosition.posInSection;
         this.editorElt.parentNode.scrollTop = Math.floor(editorScrollTop);
-        const previewScrollTop = sectionDesc.previewDimension.startOffset +
-          (sectionDesc.previewDimension.height * scrollPosition.posInSection);
+        const previewScrollTop =
+          sectionDesc.previewDimension.startOffset + sectionDesc.previewDimension.height * scrollPosition.posInSection;
         this.previewElt.parentNode.scrollTop = Math.floor(previewScrollTop);
       }
     }
@@ -54,10 +51,7 @@ export default {
   /**
    * Get the offset in the preview corresponding to the offset of the markdown in the editor
    */
-  getPreviewOffset(
-    editorOffset,
-    sectionDescList = (this.previewCtxWithDiffs || {}).sectionDescList,
-  ) {
+  getPreviewOffset(editorOffset, sectionDescList = (this.previewCtxWithDiffs || {}).sectionDescList) {
     if (!sectionDescList) {
       return null;
     }
@@ -82,10 +76,7 @@ export default {
   /**
    * Get the offset of the markdown in the editor corresponding to the offset in the preview
    */
-  getEditorOffset(
-    previewOffset,
-    sectionDescList = (this.previewCtxWithDiffs || {}).sectionDescList,
-  ) {
+  getEditorOffset(previewOffset, sectionDescList = (this.previewCtxWithDiffs || {}).sectionDescList) {
     if (!sectionDescList) {
       return null;
     }
@@ -97,8 +88,7 @@ export default {
         return true;
       }
       if (sectionDesc.previewText.length >= offset) {
-        const previewToTextDiffs = sectionDesc.textToPreviewDiffs
-          .map(diff => [-diff[0], diff[1]]);
+        const previewToTextDiffs = sectionDesc.textToPreviewDiffs.map((diff) => [-diff[0], diff[1]]);
         editorOffset += diffMatchPatch.diff_xIndex(previewToTextDiffs, offset);
         return true;
       }
@@ -121,9 +111,9 @@ export default {
     const rect = range.getBoundingClientRect();
     const contentRect = this.previewElt.getBoundingClientRect();
     return {
-      top: Math.round((rect.top - contentRect.top) + this.previewElt.scrollTop),
+      top: Math.round(rect.top - contentRect.top + this.previewElt.scrollTop),
       height: Math.round(rect.height),
-      left: Math.round((rect.right - contentRect.left) + this.previewElt.scrollLeft),
+      left: Math.round(rect.right - contentRect.left + this.previewElt.scrollLeft),
     };
   },
 
@@ -143,7 +133,8 @@ export default {
     } else if (scrollTop > maxScrollTop) {
       scrollTop = maxScrollTop;
     }
-    animationSvc.animate(scrollerElt)
+    animationSvc
+      .animate(scrollerElt)
       .scrollTop(scrollTop)
       .duration(360)
       .start();

@@ -25,11 +25,7 @@ class Marker {
           startOffset += diffOffset;
           break;
         case DIFF_INSERT:
-          if (
-            this.trailing
-              ? this.offset > startOffset
-              : this.offset >= startOffset
-          ) {
+          if (this.trailing ? this.offset > startOffset : this.offset >= startOffset) {
             this.offset += diffOffset;
           }
           startOffset += diffOffset;
@@ -44,6 +40,5 @@ class Marker {
     });
   }
 }
-
 
 cledit.Marker = Marker;

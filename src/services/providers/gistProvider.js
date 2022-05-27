@@ -78,12 +78,7 @@ export default new Provider({
     // Revision are already loaded
     return false;
   },
-  async getFileRevisionContent({
-    token,
-    contentId,
-    syncLocation,
-    revisionId,
-  }) {
+  async getFileRevisionContent({ token, contentId, syncLocation, revisionId }) {
     const data = await githubHelper.downloadGistRevision({
       ...syncLocation,
       token,

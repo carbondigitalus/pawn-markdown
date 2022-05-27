@@ -17,32 +17,34 @@ export default {
     const treeSyncLocationMap = Object.create(null);
     const treePublishLocationMap = Object.create(null);
 
-    tree.filter(({ type, path }) => type === 'blob' && path.indexOf(workspacePath) === 0)
-      .forEach((blobEntry) => {
-        // Make path relative
-        const path = blobEntry.path.slice(workspacePath.length);
-        // Collect blob sha
-        this.shaByPath[path] = blobEntry.sha;
-        if (path.indexOf('.stackedit-data/') === 0) {
-          treeDataMap[path] = true;
-        } else {
-          // Collect parents path
-          let parentPath = '';
-          path.split('/').slice(0, -1).forEach((folderName) => {
+    tree.filter(({ type, path }) => type === 'blob' && path.indexOf(workspacePath) === 0).forEach((blobEntry) => {
+      // Make path relative
+      const path = blobEntry.path.slice(workspacePath.length);
+      // Collect blob sha
+      this.shaByPath[path] = blobEntry.sha;
+      if (path.indexOf('.stackedit-data/') === 0) {
+        treeDataMap[path] = true;
+      } else {
+        // Collect parents path
+        let parentPath = '';
+        path
+          .split('/')
+          .slice(0, -1)
+          .forEach((folderName) => {
             const folderPath = `${parentPath}${folderName}/`;
             treeFolderMap[folderPath] = parentPath;
             parentPath = folderPath;
           });
-          // Collect file path
-          if (endsWith(path, '.md')) {
-            treeFileMap[path] = parentPath;
-          } else if (endsWith(path, '.sync')) {
-            treeSyncLocationMap[path] = true;
-          } else if (endsWith(path, '.publish')) {
-            treePublishLocationMap[path] = true;
-          }
+        // Collect file path
+        if (endsWith(path, '.md')) {
+          treeFileMap[path] = parentPath;
+        } else if (endsWith(path, '.sync')) {
+          treeSyncLocationMap[path] = true;
+        } else if (endsWith(path, '.publish')) {
+          treePublishLocationMap[path] = true;
         }
-      });
+      }
+    });
 
     // Collect changes
     const changes = [];
@@ -53,11 +55,13 @@ export default {
       let itemId = idsByPath[path];
       if (!itemId) {
         const existingItemId = itemIdsByGitPath[path];
-        if (existingItemId
+        if (
+          existingItemId &&
           // Reuse a file ID only if it has already been synced
-          && (!isFile || syncDataByPath[path]
-          // Content may have already been synced
-          || syncDataByPath[`/${path}`])
+          (!isFile ||
+            syncDataByPath[path] ||
+            // Content may have already been synced
+            syncDataByPath[`/${path}`])
         ) {
           itemId = existingItemId;
         } else {
@@ -181,16 +185,19 @@ export default {
     });
 
     // Location creations/updates
-    [{
-      type: 'syncLocation',
-      map: treeSyncLocationMap,
-      pathMatcher: /^([\s\S]+)\.([\w-]+)\.sync$/,
-    }, {
-      type: 'publishLocation',
-      map: treePublishLocationMap,
-      pathMatcher: /^([\s\S]+)\.([\w-]+)\.publish$/,
-    }]
-      .forEach(({ type, map, pathMatcher }) => Object.keys(map).forEach((path) => {
+    [
+      {
+        type: 'syncLocation',
+        map: treeSyncLocationMap,
+        pathMatcher: /^([\s\S]+)\.([\w-]+)\.sync$/,
+      },
+      {
+        type: 'publishLocation',
+        map: treePublishLocationMap,
+        pathMatcher: /^([\s\S]+)\.([\w-]+)\.publish$/,
+      },
+    ].forEach(({ type, map, pathMatcher }) =>
+      Object.keys(map).forEach((path) => {
         const [, filePath, data] = path.match(pathMatcher) || [];
         if (filePath) {
           // If there is a corresponding md file in the tree
@@ -221,7 +228,8 @@ export default {
             }
           }
         }
-      }));
+      }),
+    );
 
     // Deletions
     Object.keys(syncDataByPath).forEach((path) => {

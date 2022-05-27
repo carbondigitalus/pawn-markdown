@@ -1,8 +1,21 @@
 // Credit: https://github.com/github/time-elements/
 const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
 
-const pad = num => `0${num}`.slice(-2);
+const pad = (num) => `0${num}`.slice(-2);
 
 function strftime(time, formatString) {
   const day = time.getDay();

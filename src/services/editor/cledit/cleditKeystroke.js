@@ -24,7 +24,12 @@ function getNextWordOffset(text, offset, isBackward) {
   while ((isBackward && result > 0) || (!isBackward && result < text.length)) {
     const currentType = charTypes[isBackward ? text[result - 1] : text[result]] || 'word';
     if (previousType && currentType !== previousType) {
-      if (previousType === 'word' || currentType === 'space' || previousType === 'newLine' || currentType === 'newLine') {
+      if (
+        previousType === 'word' ||
+        currentType === 'space' ||
+        previousType === 'newLine' ||
+        currentType === 'newLine'
+      ) {
         break;
       }
     }
@@ -39,7 +44,6 @@ function getNextWordOffset(text, offset, isBackward) {
 }
 
 cledit.defaultKeystrokes = [
-
   new Keystroke((evt, state, editor) => {
     if ((!evt.ctrlKey && !evt.metaKey) || evt.altKey) {
       return false;
@@ -69,8 +73,7 @@ cledit.defaultKeystrokes = [
       return false;
     }
 
-    const strSplice = (str, i, remove, add = '') =>
-      str.slice(0, i) + add + str.slice(i + (+remove || 0));
+    const strSplice = (str, i, remove, add = '') => str.slice(0, i) + add + str.slice(i + (+remove || 0));
 
     evt.preventDefault();
     const isInverse = evt.shiftKey;
@@ -164,11 +167,7 @@ cledit.defaultKeystrokes = [
 
     // Custom jump behavior
     const textContent = editor.getContent();
-    const offset = getNextWordOffset(
-      textContent,
-      editor.selectionMgr.selectionEnd,
-      evt.which === 37,
-    );
+    const offset = getNextWordOffset(textContent, editor.selectionMgr.selectionEnd, evt.which === 37);
     if (evt.shiftKey) {
       // rebuild the state completely
       const min = Math.min(editor.selectionMgr.selectionStart, offset);

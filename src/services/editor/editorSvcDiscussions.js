@@ -55,20 +55,21 @@ function syncDiscussionMarkers(content, writeOffsets) {
   });
 
   Object.entries(discussions).forEach(([discussionId, discussion]) => {
-    getDiscussionMarkers(discussion, discussionId, writeOffsets
-      ? (marker) => {
-        discussion[marker.offsetName] = marker.offset;
-      }
-      : (marker) => {
-        marker.offset = discussion[marker.offsetName];
-      });
+    getDiscussionMarkers(
+      discussion,
+      discussionId,
+      writeOffsets
+        ? (marker) => {
+            discussion[marker.offsetName] = marker.offset;
+          }
+        : (marker) => {
+            marker.offset = discussion[marker.offsetName];
+          },
+    );
   });
 
   if (writeOffsets && newDiscussion) {
-    store.commit(
-      'discussion/patchNewDiscussion',
-      discussions[store.state.discussion.newDiscussionId],
-    );
+    store.commit('discussion/patchNewDiscussion', discussions[store.state.discussion.newDiscussionId]);
   }
 }
 
@@ -93,7 +94,7 @@ function applyPatches(patches) {
   let result = newPatchableText;
   if (markerKeys.length) {
     // Strip text markers
-    result = result.replace(new RegExp(`[\ue000-${String.fromCharCode((0xe000 + markerKeys.length) - 1)}]`, 'g'), '');
+    result = result.replace(new RegExp(`[\ue000-${String.fromCharCode(0xe000 + markerKeys.length - 1)}]`, 'g'), '');
   }
   // Expect a `contentChanged` event
   if (result !== clEditor.getContent()) {
@@ -144,15 +145,18 @@ export default {
     if (content) {
       removeDiscussionMarkers(); // Markers will be recreated on contentChanged
       const contentState = store.getters['contentState/current'];
-      const options = Object.assign({
-        selectionStart: contentState.selectionStart,
-        selectionEnd: contentState.selectionEnd,
-        patchHandler: {
-          makePatches,
-          applyPatches,
-          reversePatches,
+      const options = Object.assign(
+        {
+          selectionStart: contentState.selectionStart,
+          selectionEnd: contentState.selectionEnd,
+          patchHandler: {
+            makePatches,
+            applyPatches,
+            reversePatches,
+          },
         },
-      }, opts);
+        opts,
+      );
 
       if (contentId !== content.id) {
         contentId = content.id;
@@ -205,24 +209,25 @@ export default {
           }
           return classes;
         };
-        const offsetGetter = discussionId => () => {
+        const offsetGetter = (discussionId) => () => {
           const startMarker = discussionMarkers[`${discussionId}:start`];
           const endMarker = discussionMarkers[`${discussionId}:end`];
-          return startMarker && endMarker && {
-            start: startMarker.offset,
-            end: endMarker.offset,
-          };
+          return (
+            startMarker &&
+            endMarker && {
+              start: startMarker.offset,
+              end: endMarker.offset,
+            }
+          );
         };
 
         // Editor class appliers
         const oldEditorClassAppliers = editorClassAppliers;
         editorClassAppliers = {};
         Object.keys(discussions).forEach((discussionId) => {
-          const classApplier = oldEditorClassAppliers[discussionId] || new EditorClassApplier(
-            classGetter('editor', discussionId),
-            offsetGetter(discussionId),
-            { discussionId },
-          );
+          const classApplier =
+            oldEditorClassAppliers[discussionId] ||
+            new EditorClassApplier(classGetter('editor', discussionId), offsetGetter(discussionId), { discussionId });
           editorClassAppliers[discussionId] = classApplier;
         });
         // Clean unused class appliers
@@ -236,11 +241,9 @@ export default {
         const oldPreviewClassAppliers = previewClassAppliers;
         previewClassAppliers = {};
         Object.keys(discussions).forEach((discussionId) => {
-          const classApplier = oldPreviewClassAppliers[discussionId] || new PreviewClassApplier(
-            classGetter('preview', discussionId),
-            offsetGetter(discussionId),
-            { discussionId },
-          );
+          const classApplier =
+            oldPreviewClassAppliers[discussionId] ||
+            new PreviewClassApplier(classGetter('preview', discussionId), offsetGetter(discussionId), { discussionId });
           previewClassAppliers[discussionId] = classApplier;
         });
         // Clean unused class appliers
@@ -253,4 +256,3 @@ export default {
     );
   },
 };
-

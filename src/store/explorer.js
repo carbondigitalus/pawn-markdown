@@ -2,7 +2,7 @@ import Vue from 'vue';
 import emptyFile from '../data/empties/emptyFile';
 import emptyFolder from '../data/empties/emptyFolder';
 
-const setter = propertyName => (state, value) => {
+const setter = (propertyName) => (state, value) => {
   state[propertyName] = value;
 };
 
@@ -32,7 +32,7 @@ class Node {
     if (this.isFolder) {
       this.folders.sort(compare);
       this.files.sort(compare);
-      this.folders.forEach(child => child.sortChildren());
+      this.folders.forEach((child) => child.sortChildren());
     }
   }
 }
@@ -51,9 +51,7 @@ function getParent({ item, isNil }, { nodeMap, rootNode }) {
 }
 
 function getFolder(node, getters) {
-  return node.item.type === 'folder' ?
-    node :
-    getParent(node, getters);
+  return node.item.type === 'folder' ? node : getParent(node, getters);
 }
 
 export default {
@@ -114,10 +112,7 @@ export default {
       const syncLocationsByFileId = rootGetters['syncLocation/filteredGroupedByFileId'];
       const publishLocationsByFileId = rootGetters['publishLocation/filteredGroupedByFileId'];
       rootGetters['file/items'].forEach((item) => {
-        const locations = [
-          ...syncLocationsByFileId[item.id] || [],
-          ...publishLocationsByFileId[item.id] || [],
-        ];
+        const locations = [...(syncLocationsByFileId[item.id] || []), ...(publishLocationsByFileId[item.id] || [])];
         nodeMap[item.id] = new Node(item, locations);
       });
 
@@ -174,12 +169,7 @@ export default {
     },
   },
   actions: {
-    openNode({
-      state,
-      getters,
-      commit,
-      dispatch,
-    }, id) {
+    openNode({ state, getters, commit, dispatch }, id) {
       const node = getters.nodeMap[id];
       if (node) {
         if (node.isFolder && !state.openNodes[id]) {
@@ -199,10 +189,7 @@ export default {
         const folderNode = getFolder(node, getters);
         const sourceId = getters.dragSourceNode.item.id;
         const { nodeMap } = getters;
-        for (let parentNode = folderNode;
-          parentNode;
-          parentNode = nodeMap[parentNode.item.parentId]
-        ) {
+        for (let parentNode = folderNode; parentNode; parentNode = nodeMap[parentNode.item.parentId]) {
           if (parentNode.item.id === sourceId) {
             commit('setDragTargetId');
             return;

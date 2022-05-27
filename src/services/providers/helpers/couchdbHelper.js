@@ -39,7 +39,7 @@ const request = async (token, options = {}) => {
     ...options,
     headers: {
       Accept: 'application/json',
-      ...options.headers || {},
+      ...(options.headers || {}),
     },
     url: utils.resolveUrl(baseUrl, options.path || '.'),
     withCredentials: true,
@@ -64,7 +64,6 @@ const request = async (token, options = {}) => {
 };
 
 export default {
-
   /**
    * http://docs.couchdb.org/en/2.1.1/api/database/common.html#db
    */
@@ -106,14 +105,7 @@ export default {
    * http://docs.couchdb.org/en/2.1.1/api/database/common.html#post--db
    * http://docs.couchdb.org/en/2.1.1/api/document/common.html#put--db-docid
    */
-  async uploadDocument({
-    token,
-    item,
-    data = null,
-    dataType = null,
-    documentId = null,
-    rev = null,
-  }) {
+  async uploadDocument({ token, item, data = null, dataType = null, documentId = null, rev = null }) {
     const options = {
       method: 'POST',
       body: { item, time: Date.now() },
@@ -128,7 +120,8 @@ export default {
       options.body._rev = rev; // eslint-disable-line no-underscore-dangle
     }
     if (data) {
-      options.body._attachments = { // eslint-disable-line no-underscore-dangle
+      options.body._attachments = {
+        // eslint-disable-line no-underscore-dangle
         data: {
           content_type: dataType,
           data: utils.encodeBase64(data),

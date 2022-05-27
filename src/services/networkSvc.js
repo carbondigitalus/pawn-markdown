@@ -14,11 +14,17 @@ let isConfLoading = false;
 let isConfLoaded = false;
 
 function parseHeaders(xhr) {
-  const pairs = xhr.getAllResponseHeaders().trim().split('\n');
+  const pairs = xhr
+    .getAllResponseHeaders()
+    .trim()
+    .split('\n');
   const headers = {};
   pairs.forEach((header) => {
     const split = header.trim().split(':');
-    const key = split.shift().trim().toLowerCase();
+    const key = split
+      .shift()
+      .trim()
+      .toLowerCase();
     const value = split.join(':').trim();
     headers[key] = value;
   });
@@ -58,9 +64,10 @@ export default {
     // Check that browser is online periodically
     const checkOffline = async () => {
       const isBrowserOffline = window.navigator.onLine === false;
-      if (!isBrowserOffline
-        && store.state.lastOfflineCheck + networkTimeout + 5000 < Date.now()
-        && this.isUserActive()
+      if (
+        !isBrowserOffline &&
+        store.state.lastOfflineCheck + networkTimeout + 5000 < Date.now() &&
+        this.isUserActive()
       ) {
         store.commit('updateLastOfflineCheck');
         const script = document.createElement('script');

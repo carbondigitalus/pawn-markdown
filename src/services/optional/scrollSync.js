@@ -19,7 +19,7 @@ let throttleLastTime = 0;
 function throttle(func, wait) {
   clearTimeout(throttleTimeoutId);
   const currentTime = Date.now();
-  const localWait = (wait + throttleLastTime) - currentTime;
+  const localWait = wait + throttleLastTime - currentTime;
   if (localWait < 1) {
     throttleLastTime = currentTime;
     func();
@@ -50,29 +50,29 @@ const doScrollSync = () => {
       if (editorScrollTop > sectionDesc.editorDimension.endOffset) {
         return false;
       }
-      const posInSection = (editorScrollTop - sectionDesc.editorDimension.startOffset)
-        / (sectionDesc.editorDimension.height || 1);
-      scrollTo = (sectionDesc.previewDimension.startOffset
-        + (sectionDesc.previewDimension.height * posInSection));
+      const posInSection =
+        (editorScrollTop - sectionDesc.editorDimension.startOffset) / (sectionDesc.editorDimension.height || 1);
+      scrollTo = sectionDesc.previewDimension.startOffset + sectionDesc.previewDimension.height * posInSection;
       return true;
     });
-    scrollTo = Math.min(
-      scrollTo,
-      previewScrollerElt.scrollHeight - previewScrollerElt.offsetHeight,
-    );
+    scrollTo = Math.min(scrollTo, previewScrollerElt.scrollHeight - previewScrollerElt.offsetHeight);
 
     throttle(() => {
       clearTimeout(previewFinishTimeoutId);
-      animationSvc.animate(previewScrollerElt)
+      animationSvc
+        .animate(previewScrollerElt)
         .scrollTop(scrollTo)
         .duration(!localSkipAnimation && 100)
-        .start(() => {
-          previewFinishTimeoutId = setTimeout(() => {
-            isPreviewMoving = false;
-          }, 100);
-        }, () => {
-          isPreviewMoving = true;
-        });
+        .start(
+          () => {
+            previewFinishTimeoutId = setTimeout(() => {
+              isPreviewMoving = false;
+            }, 100);
+          },
+          () => {
+            isPreviewMoving = true;
+          },
+        );
     }, localSkipAnimation ? 500 : 50);
   } else if (!store.getters['layout/styles'].showEditor || isScrollPreview) {
     // Scroll the editor
@@ -81,29 +81,29 @@ const doScrollSync = () => {
       if (previewScrollTop > sectionDesc.previewDimension.endOffset) {
         return false;
       }
-      const posInSection = (previewScrollTop - sectionDesc.previewDimension.startOffset)
-        / (sectionDesc.previewDimension.height || 1);
-      scrollTo = (sectionDesc.editorDimension.startOffset
-        + (sectionDesc.editorDimension.height * posInSection));
+      const posInSection =
+        (previewScrollTop - sectionDesc.previewDimension.startOffset) / (sectionDesc.previewDimension.height || 1);
+      scrollTo = sectionDesc.editorDimension.startOffset + sectionDesc.editorDimension.height * posInSection;
       return true;
     });
-    scrollTo = Math.min(
-      scrollTo,
-      editorScrollerElt.scrollHeight - editorScrollerElt.offsetHeight,
-    );
+    scrollTo = Math.min(scrollTo, editorScrollerElt.scrollHeight - editorScrollerElt.offsetHeight);
 
     throttle(() => {
       clearTimeout(editorFinishTimeoutId);
-      animationSvc.animate(editorScrollerElt)
+      animationSvc
+        .animate(editorScrollerElt)
         .scrollTop(scrollTo)
         .duration(!localSkipAnimation && 100)
-        .start(() => {
-          editorFinishTimeoutId = setTimeout(() => {
-            isEditorMoving = false;
-          }, 100);
-        }, () => {
-          isEditorMoving = true;
-        });
+        .start(
+          () => {
+            editorFinishTimeoutId = setTimeout(() => {
+              isEditorMoving = false;
+            }, 100);
+          },
+          () => {
+            isEditorMoving = true;
+          },
+        );
     }, localSkipAnimation ? 500 : 50);
   }
 };

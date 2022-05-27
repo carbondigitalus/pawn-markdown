@@ -71,7 +71,7 @@ const store = new Vuex.Store({
   getters: {
     allItemsById: (state) => {
       const result = {};
-      constants.types.forEach(type => Object.assign(result, state[type].itemsById));
+      constants.types.forEach((type) => Object.assign(result, state[type].itemsById));
       return result;
     },
     pathsByItemId: (state, getters) => {
@@ -89,8 +89,8 @@ const store = new Vuex.Store({
         }
 
         if (node.isFolder) {
-          node.folders.forEach(child => processNode(child, path));
-          node.files.forEach(child => processNode(child, path));
+          node.folders.forEach((child) => processNode(child, path));
+          node.files.forEach((child) => processNode(child, path));
         }
       };
 
@@ -124,13 +124,16 @@ const store = new Vuex.Store({
           result[id] = pathsByItemId[id];
         } else if (item.type === 'syncLocation' || item.type === 'publishLocation') {
           // locations are stored as paths
-          const encodedItem = utils.encodeBase64(utils.serializeObject({
-            ...item,
-            id: undefined,
-            type: undefined,
-            fileId: undefined,
-            hash: undefined,
-          }), true);
+          const encodedItem = utils.encodeBase64(
+            utils.serializeObject({
+              ...item,
+              id: undefined,
+              type: undefined,
+              fileId: undefined,
+              hash: undefined,
+            }),
+            true,
+          );
           const extension = item.type === 'syncLocation' ? 'sync' : 'publish';
           result[id] = `${pathsByItemId[item.fileId]}.${encodedItem}.${extension}`;
         }

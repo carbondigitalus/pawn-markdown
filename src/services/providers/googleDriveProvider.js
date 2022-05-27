@@ -32,9 +32,7 @@ export default new Provider({
       }
 
       const openWorkspaceIfExists = (file) => {
-        const folderId = file
-          && file.appProperties
-          && file.appProperties.folderId;
+        const folderId = file && file.appProperties && file.appProperties.folderId;
         if (folderId) {
           // See if we have the corresponding workspace
           const workspaceParams = {
@@ -92,10 +90,7 @@ export default new Provider({
         return this.makeLocation(token, null, googleHelper.driveActionFolder.id);
       }
       case 'open':
-        store.dispatch(
-          'queue/enqueue',
-          () => this.openFiles(token, googleHelper.driveActionFiles),
-        );
+        store.dispatch('queue/enqueue', () => this.openFiles(token, googleHelper.driveActionFiles));
         return null;
       default:
         return null;
@@ -142,10 +137,12 @@ export default new Provider({
   async openFiles(token, driveFiles) {
     return utils.awaitSequence(driveFiles, async (driveFile) => {
       // Check if the file exists and open it
-      if (!Provider.openFileWithLocation({
-        providerId: this.id,
-        driveFileId: driveFile.id,
-      })) {
+      if (
+        !Provider.openFileWithLocation({
+          providerId: this.id,
+          driveFileId: driveFile.id,
+        })
+      ) {
         // Download content from Google Drive
         const syncLocation = {
           driveFileId: driveFile.id,
@@ -161,14 +158,17 @@ export default new Provider({
         }
 
         // Create the file
-        const item = await workspaceSvc.createFile({
-          name: driveFile.name,
-          parentId: store.getters['file/current'].parentId,
-          text: content.text,
-          properties: content.properties,
-          discussions: content.discussions,
-          comments: content.comments,
-        }, true);
+        const item = await workspaceSvc.createFile(
+          {
+            name: driveFile.name,
+            parentId: store.getters['file/current'].parentId,
+            text: content.text,
+            properties: content.properties,
+            discussions: content.discussions,
+            comments: content.comments,
+          },
+          true,
+        );
         store.commit('file/setCurrentId', item.id);
         workspaceSvc.addSyncLocation({
           ...syncLocation,
@@ -193,7 +193,7 @@ export default new Provider({
   },
   async listFileRevisions({ token, syncLocation }) {
     const revisions = await googleHelper.getFileRevisions(token, syncLocation.driveFileId);
-    return revisions.map(revision => ({
+    return revisions.map((revision) => ({
       id: revision.id,
       sub: `${googleHelper.subPrefix}:${revision.lastModifyingUser.permissionId}`,
       created: new Date(revision.modifiedTime).getTime(),
@@ -203,14 +203,8 @@ export default new Provider({
     // Revision are already loaded
     return false;
   },
-  async getFileRevisionContent({
-    token,
-    contentId,
-    syncLocation,
-    revisionId,
-  }) {
-    const content = await googleHelper
-      .downloadFileRevision(token, syncLocation.driveFileId, revisionId);
+  async getFileRevisionContent({ token, contentId, syncLocation, revisionId }) {
+    const content = await googleHelper.downloadFileRevision(token, syncLocation.driveFileId, revisionId);
     return Provider.parseContent(content, contentId);
   },
 });

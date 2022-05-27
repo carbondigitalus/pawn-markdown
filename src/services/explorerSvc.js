@@ -5,8 +5,9 @@ import badgeSvc from './badgeSvc';
 export default {
   newItem(isFolder = false) {
     let parentId = store.getters['explorer/selectedNodeFolder'].item.id;
-    if (parentId === 'trash' // Not allowed to create new items in the trash
-      || (isFolder && parentId === 'temp') // Not allowed to create new folders in the temp folder
+    if (
+      parentId === 'trash' || // Not allowed to create new items in the trash
+      (isFolder && parentId === 'temp') // Not allowed to create new folders in the temp folder
     ) {
       parentId = null;
     }

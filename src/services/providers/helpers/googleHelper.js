@@ -8,10 +8,10 @@ const appsDomain = null;
 const tokenExpirationMargin = 5 * 60 * 1000; // 5 min (tokens expire after 1h)
 
 const driveAppDataScopes = ['https://www.googleapis.com/auth/drive.appdata'];
-const getDriveScopes = token => [token.driveFullAccess
-  ? 'https://www.googleapis.com/auth/drive'
-  : 'https://www.googleapis.com/auth/drive.file',
-'https://www.googleapis.com/auth/drive.install'];
+const getDriveScopes = (token) => [
+  token.driveFullAccess ? 'https://www.googleapis.com/auth/drive' : 'https://www.googleapis.com/auth/drive.file',
+  'https://www.googleapis.com/auth/drive.install',
+];
 const bloggerScopes = ['https://www.googleapis.com/auth/blogger'];
 const photosScopes = ['https://www.googleapis.com/auth/photos'];
 
@@ -41,18 +41,21 @@ if (utils.queryParams.providerId === 'googleDrive') {
 const getUser = async (sub, token) => {
   const apiKey = store.getters['data/serverConf'].googleApiKey;
   const url = `https://people.googleapis.com/v1/people/${sub}?personFields=names,photos&key=${apiKey}`;
-  const { body } = await networkSvc.request(sub === 'me' && token
-    ? {
-      method: 'GET',
-      url,
-      headers: {
-        Authorization: `Bearer ${token.accessToken}`,
-      },
-    }
-    : {
-      method: 'GET',
-      url,
-    }, true);
+  const { body } = await networkSvc.request(
+    sub === 'me' && token
+      ? {
+          method: 'GET',
+          url,
+          headers: {
+            Authorization: `Bearer ${token.accessToken}`,
+          },
+        }
+      : {
+          method: 'GET',
+          url,
+        },
+    true,
+  );
   return body;
 };
 
@@ -84,13 +87,16 @@ export default {
   driveActionFiles: [],
   async $request(token, options) {
     try {
-      return (await networkSvc.request({
-        ...options,
-        headers: {
-          ...options.headers || {},
-          Authorization: `Bearer ${token.accessToken}`,
+      return (await networkSvc.request(
+        {
+          ...options,
+          headers: {
+            ...(options.headers || {}),
+            Authorization: `Bearer ${token.accessToken}`,
+          },
         },
-      }, true)).body;
+        true,
+      )).body;
     } catch (err) {
       const { reason } = (((err.body || {}).error || {}).errors || [])[0] || {};
       if (reason === 'authError') {
@@ -129,13 +135,16 @@ export default {
     );
 
     // Call the token info endpoint
-    const { body } = await networkSvc.request({
-      method: 'POST',
-      url: 'https://www.googleapis.com/oauth2/v3/tokeninfo',
-      params: {
-        access_token: accessToken,
+    const { body } = await networkSvc.request(
+      {
+        method: 'POST',
+        url: 'https://www.googleapis.com/oauth2/v3/tokeninfo',
+        params: {
+          access_token: accessToken,
+        },
       },
-    }, true);
+      true,
+    );
 
     // Check the returned client ID consistency
     if (body.aud !== clientId) {
@@ -151,14 +160,16 @@ export default {
     const token = {
       scopes,
       accessToken,
-      expiresOn: Date.now() + (expiresIn * 1000),
+      expiresOn: Date.now() + expiresIn * 1000,
       idToken,
       sub: body.sub,
       name: (existingToken || {}).name || 'Someone',
-      isLogin: !store.getters['workspace/mainWorkspaceToken'] &&
+      isLogin:
+        !store.getters['workspace/mainWorkspaceToken'] &&
         scopes.includes('https://www.googleapis.com/auth/drive.appdata'),
       isSponsor: false,
-      isDrive: scopes.includes('https://www.googleapis.com/auth/drive') ||
+      isDrive:
+        scopes.includes('https://www.googleapis.com/auth/drive') ||
         scopes.includes('https://www.googleapis.com/auth/drive.file'),
       isBlogger: scopes.includes('https://www.googleapis.com/auth/blogger'),
       isPhotos: scopes.includes('https://www.googleapis.com/auth/photos'),
@@ -218,10 +229,7 @@ export default {
   async refreshToken(token, scopes = []) {
     const { sub } = token;
     const lastToken = store.getters['data/googleTokensBySub'][sub];
-    const mergedScopes = [...new Set([
-      ...scopes,
-      ...lastToken.scopes,
-    ])];
+    const mergedScopes = [...new Set([...scopes, ...lastToken.scopes])];
 
     if (
       // If we already have permissions for the requested scopes
@@ -283,7 +291,7 @@ export default {
     mediaType = null,
     fileId = null,
     oldParents = null,
-    ifNotTooLate = cb => cb(),
+    ifNotTooLate = (cb) => cb(),
   }) {
     // Refreshing a token can take a while if an oauth window pops up, make sure it's not too late
     return ifNotTooLate(() => {
@@ -299,12 +307,8 @@ export default {
         options.method = 'PATCH';
         options.url = `https://www.googleapis.com/drive/v3/files/${fileId}`;
         if (parents && oldParents) {
-          params.addParents = parents
-            .filter(parent => !oldParents.includes(parent))
-            .join(',');
-          params.removeParents = oldParents
-            .filter(parent => !parents.includes(parent))
-            .join(',');
+          params.addParents = parents.filter((parent) => !oldParents.includes(parent)).join(',');
+          params.removeParents = oldParents.filter((parent) => !parents.includes(parent)).join(',');
         }
       } else if (parents) {
         metadata.parents = parents;
@@ -321,10 +325,7 @@ export default {
         multipartRequestBody += `Content-Type: ${mediaType || 'text/plain'}; charset=UTF-8\r\n\r\n`;
         multipartRequestBody += media;
         multipartRequestBody += closeDelimiter;
-        options.url = options.url.replace(
-          'https://www.googleapis.com/',
-          'https://www.googleapis.com/upload/',
-        );
+        options.url = options.url.replace('https://www.googleapis.com/', 'https://www.googleapis.com/upload/');
         return this.$request(refreshedToken, {
           ...options,
           params: {
@@ -347,17 +348,7 @@ export default {
       });
     });
   },
-  async uploadFile({
-    token,
-    name,
-    parents,
-    appProperties,
-    media,
-    mediaType,
-    fileId,
-    oldParents,
-    ifNotTooLate,
-  }) {
+  async uploadFile({ token, name, parents, appProperties, media, mediaType, fileId, oldParents, ifNotTooLate }) {
     const refreshedToken = await this.refreshToken(token, getDriveScopes(token));
     return this.$uploadFile({
       refreshedToken,
@@ -371,13 +362,7 @@ export default {
       ifNotTooLate,
     });
   },
-  async uploadAppDataFile({
-    token,
-    name,
-    media,
-    fileId,
-    ifNotTooLate,
-  }) {
+  async uploadAppDataFile({ token, name, media, fileId, ifNotTooLate }) {
     const refreshedToken = await this.refreshToken(token, driveAppDataScopes);
     return this.$uploadFile({
       refreshedToken,
@@ -426,21 +411,23 @@ export default {
   /**
    * https://developers.google.com/drive/v3/reference/files/delete
    */
-  async $removeFile(refreshedToken, id, ifNotTooLate = cb => cb()) {
+  async $removeFile(refreshedToken, id, ifNotTooLate = (cb) => cb()) {
     // Refreshing a token can take a while if an oauth window pops up, so check if it's too late
-    return ifNotTooLate(() => this.$request(refreshedToken, {
-      method: 'DELETE',
-      url: `https://www.googleapis.com/drive/v3/files/${id}`,
-      params: {
-        supportsTeamDrives: true,
-      },
-    }));
+    return ifNotTooLate(() =>
+      this.$request(refreshedToken, {
+        method: 'DELETE',
+        url: `https://www.googleapis.com/drive/v3/files/${id}`,
+        params: {
+          supportsTeamDrives: true,
+        },
+      }),
+    );
   },
   async removeFile(token, id, ifNotTooLate) {
     const refreshedToken = await this.refreshToken(token, getDriveScopes(token));
     return this.$removeFile(refreshedToken, id, ifNotTooLate);
   },
-  async removeAppDataFile(token, id, ifNotTooLate = cb => cb()) {
+  async removeAppDataFile(token, id, ifNotTooLate = (cb) => cb()) {
     const refreshedToken = await this.refreshToken(token, driveAppDataScopes);
     return this.$removeFile(refreshedToken, id, ifNotTooLate);
   },
@@ -457,7 +444,8 @@ export default {
         params: {
           pageToken,
           pageSize: 1000,
-          fields: 'nextPageToken,revisions(id,modifiedTime,lastModifyingUser/permissionId,lastModifyingUser/displayName,lastModifyingUser/photoLink)',
+          fields:
+            'nextPageToken,revisions(id,modifiedTime,lastModifyingUser/permissionId,lastModifyingUser/displayName,lastModifyingUser/photoLink)',
         },
       });
       revisions.forEach((revision) => {
@@ -514,10 +502,7 @@ export default {
     if (!isAppData) {
       fileFields += ',file/parents,file/mimeType,file/appProperties';
     }
-    const refreshedToken = await this.refreshToken(
-      token,
-      isAppData ? driveAppDataScopes : getDriveScopes(token),
-    );
+    const refreshedToken = await this.refreshToken(token, isAppData ? driveAppDataScopes : getDriveScopes(token));
 
     const getPage = async (pageToken = '1') => {
       const { changes, nextPageToken, newStartPageToken } = await this.$request(refreshedToken, {
@@ -533,7 +518,7 @@ export default {
           teamDriveId,
         },
       });
-      result.changes = [...result.changes, ...changes.filter(item => item.fileId)];
+      result.changes = [...result.changes, ...changes.filter((item) => item.fileId)];
       if (nextPageToken) {
         return getPage(nextPageToken);
       }
@@ -548,18 +533,7 @@ export default {
    * https://developers.google.com/blogger/docs/3.0/reference/posts/insert
    * https://developers.google.com/blogger/docs/3.0/reference/posts/update
    */
-  async uploadBlogger({
-    token,
-    blogUrl,
-    blogId,
-    postId,
-    title,
-    content,
-    labels,
-    isDraft,
-    published,
-    isPage,
-  }) {
+  async uploadBlogger({ token, blogUrl, blogId, postId, title, content, labels, isDraft, published, isPage }) {
     const refreshedToken = await this.refreshToken(token, bloggerScopes);
 
     // Get the blog ID
@@ -626,12 +600,14 @@ export default {
     const scopes = type === 'img' ? photosScopes : getDriveScopes(token);
     if (!window.google) {
       await networkSvc.loadScript('https://apis.google.com/js/api.js');
-      await new Promise((resolve, reject) => window.gapi.load('picker', {
-        callback: resolve,
-        onerror: reject,
-        timeout: 30000,
-        ontimeout: reject,
-      }));
+      await new Promise((resolve, reject) =>
+        window.gapi.load('picker', {
+          callback: resolve,
+          onerror: reject,
+          timeout: 30000,
+          ontimeout: reject,
+        }),
+      );
     }
     const refreshedToken = await this.refreshToken(token, scopes);
     const { google } = window;
@@ -654,11 +630,7 @@ export default {
       switch (type) {
         default:
         case 'doc': {
-          const mimeTypes = [
-            'text/plain',
-            'text/x-markdown',
-            'application/octet-stream',
-          ].join(',');
+          const mimeTypes = ['text/plain', 'text/x-markdown', 'application/octet-stream'].join(',');
 
           const view = new google.picker.DocsView(google.picker.ViewId.DOCS);
           view.setMimeTypes(mimeTypes);

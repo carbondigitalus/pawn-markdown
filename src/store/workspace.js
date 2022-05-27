@@ -32,8 +32,7 @@ export default {
           // Build the url with the current hostname
           const params = workspaceProvider.getWorkspaceParams(sanitizedWorkspace);
           sanitizedWorkspace.url = utils.addQueryParams('app', params, true);
-          sanitizedWorkspace.locationUrl = workspaceProvider
-            .getWorkspaceLocationUrl(sanitizedWorkspace);
+          sanitizedWorkspace.locationUrl = workspaceProvider.getWorkspaceLocationUrl(sanitizedWorkspace);
           workspacesById[id] = sanitizedWorkspace;
         }
       });
@@ -43,11 +42,9 @@ export default {
     currentWorkspace: ({ currentWorkspaceId }, { workspacesById, mainWorkspace }) =>
       workspacesById[currentWorkspaceId] || mainWorkspace,
     currentWorkspaceIsGit: (state, { currentWorkspace }) =>
-      currentWorkspace.providerId === 'githubWorkspace'
-      || currentWorkspace.providerId === 'gitlabWorkspace',
+      currentWorkspace.providerId === 'githubWorkspace' || currentWorkspace.providerId === 'gitlabWorkspace',
     currentWorkspaceHasUniquePaths: (state, { currentWorkspace }) =>
-      currentWorkspace.providerId === 'githubWorkspace'
-      || currentWorkspace.providerId === 'gitlabWorkspace',
+      currentWorkspace.providerId === 'githubWorkspace' || currentWorkspace.providerId === 'gitlabWorkspace',
     lastSyncActivityKey: (state, { currentWorkspace }) => `${currentWorkspace.id}/lastSyncActivity`,
     lastFocusKey: (state, { currentWorkspace }) => `${currentWorkspace.id}/lastWindowFocus`,
     mainWorkspaceToken: (state, getters, rootState, rootGetters) =>
@@ -94,34 +91,24 @@ export default {
         ...rootGetters['data/workspaces'],
       };
       delete workspaces[id];
-      commit(
-        'data/setItem',
-        { id: 'workspaces', data: workspaces },
-        { root: true },
-      );
+      commit('data/setItem', { id: 'workspaces', data: workspaces }, { root: true });
     },
     patchWorkspacesById: ({ commit, rootGetters }, workspaces) => {
       const sanitizedWorkspaces = {};
-      Object
-        .entries({
-          ...rootGetters['data/workspaces'],
-          ...workspaces,
-        })
-        .forEach(([id, workspace]) => {
-          sanitizedWorkspaces[id] = {
-            ...workspace,
-            id,
-            // Do not store urls
-            url: undefined,
-            locationUrl: undefined,
-          };
-        });
+      Object.entries({
+        ...rootGetters['data/workspaces'],
+        ...workspaces,
+      }).forEach(([id, workspace]) => {
+        sanitizedWorkspaces[id] = {
+          ...workspace,
+          id,
+          // Do not store urls
+          url: undefined,
+          locationUrl: undefined,
+        };
+      });
 
-      commit(
-        'data/setItem',
-        { id: 'workspaces', data: sanitizedWorkspaces },
-        { root: true },
-      );
+      commit('data/setItem', { id: 'workspaces', data: sanitizedWorkspaces }, { root: true });
     },
     setCurrentWorkspaceId: ({ commit, getters }, value) => {
       commit('setCurrentWorkspaceId', value);

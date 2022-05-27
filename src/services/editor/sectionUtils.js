@@ -6,9 +6,8 @@ class SectionDimension {
   }
 }
 
-const dimensionNormalizer = dimensionName => (editorSvc) => {
-  const dimensionList = editorSvc.previewCtx.sectionDescList
-    .map(sectionDesc => sectionDesc[dimensionName]);
+const dimensionNormalizer = (dimensionName) => (editorSvc) => {
+  const dimensionList = editorSvc.previewCtx.sectionDescList.map((sectionDesc) => sectionDesc[dimensionName]);
   let dimension;
   let i;
   let j;
@@ -55,35 +54,25 @@ export default {
       let newEditorSectionOffset = nextSectionDesc.editorElt
         ? nextSectionDesc.editorElt.offsetTop
         : editorSectionOffset;
-      newEditorSectionOffset = newEditorSectionOffset > editorSectionOffset
-        ? newEditorSectionOffset
-        : editorSectionOffset;
-      sectionDesc.editorDimension = new SectionDimension(
-        editorSectionOffset,
-        newEditorSectionOffset,
-      );
+      newEditorSectionOffset =
+        newEditorSectionOffset > editorSectionOffset ? newEditorSectionOffset : editorSectionOffset;
+      sectionDesc.editorDimension = new SectionDimension(editorSectionOffset, newEditorSectionOffset);
       editorSectionOffset = newEditorSectionOffset;
 
       // Measure preview section
       let newPreviewSectionOffset = nextSectionDesc.previewElt
         ? nextSectionDesc.previewElt.offsetTop
         : previewSectionOffset;
-      newPreviewSectionOffset = newPreviewSectionOffset > previewSectionOffset
-        ? newPreviewSectionOffset
-        : previewSectionOffset;
-      sectionDesc.previewDimension = new SectionDimension(
-        previewSectionOffset,
-        newPreviewSectionOffset,
-      );
+      newPreviewSectionOffset =
+        newPreviewSectionOffset > previewSectionOffset ? newPreviewSectionOffset : previewSectionOffset;
+      sectionDesc.previewDimension = new SectionDimension(previewSectionOffset, newPreviewSectionOffset);
       previewSectionOffset = newPreviewSectionOffset;
 
       // Measure TOC section
       let newTocSectionOffset = nextSectionDesc.tocElt
-        ? nextSectionDesc.tocElt.offsetTop + (nextSectionDesc.tocElt.offsetHeight / 2)
+        ? nextSectionDesc.tocElt.offsetTop + nextSectionDesc.tocElt.offsetHeight / 2
         : tocSectionOffset;
-      newTocSectionOffset = newTocSectionOffset > tocSectionOffset
-        ? newTocSectionOffset
-        : tocSectionOffset;
+      newTocSectionOffset = newTocSectionOffset > tocSectionOffset ? newTocSectionOffset : tocSectionOffset;
       sectionDesc.tocDimension = new SectionDimension(tocSectionOffset, newTocSectionOffset);
       tocSectionOffset = newTocSectionOffset;
 
@@ -93,18 +82,9 @@ export default {
     // Last section
     sectionDesc = editorSvc.previewCtx.sectionDescList[i - 1];
     if (sectionDesc) {
-      sectionDesc.editorDimension = new SectionDimension(
-        editorSectionOffset,
-        editorSvc.editorElt.scrollHeight,
-      );
-      sectionDesc.previewDimension = new SectionDimension(
-        previewSectionOffset,
-        editorSvc.previewElt.scrollHeight,
-      );
-      sectionDesc.tocDimension = new SectionDimension(
-        tocSectionOffset,
-        editorSvc.tocElt.scrollHeight,
-      );
+      sectionDesc.editorDimension = new SectionDimension(editorSectionOffset, editorSvc.editorElt.scrollHeight);
+      sectionDesc.previewDimension = new SectionDimension(previewSectionOffset, editorSvc.previewElt.scrollHeight);
+      sectionDesc.tocDimension = new SectionDimension(tocSectionOffset, editorSvc.tocElt.scrollHeight);
     }
 
     normalizeEditorDimensions(editorSvc);

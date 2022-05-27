@@ -4,12 +4,7 @@ import utils from './utils';
 import editorSvc from './editorSvc';
 import workspaceSvc from './workspaceSvc';
 
-const {
-  origin,
-  fileName,
-  contentText,
-  contentProperties,
-} = utils.queryParams;
+const { origin, fileName, contentText, contentProperties } = utils.queryParams;
 const isLight = origin && window.parent;
 
 export default {
@@ -34,12 +29,15 @@ export default {
     }
     store.commit('setLight', true);
 
-    const file = await workspaceSvc.createFile({
-      name: fileName || utils.getHostname(origin),
-      text: contentText || '\n',
-      properties: contentProperties,
-      parentId: 'temp',
-    }, true);
+    const file = await workspaceSvc.createFile(
+      {
+        name: fileName || utils.getHostname(origin),
+        text: contentText || '\n',
+        properties: contentProperties,
+        parentId: 'temp',
+      },
+      true,
+    );
 
     // Sanitize file creations
     const lastCreated = {};
@@ -76,19 +74,22 @@ export default {
       } else if (!this.closed && editorSvc.previewCtx.html != null) {
         const content = store.getters['content/current'];
         const properties = utils.computeProperties(content.properties);
-        window.parent.postMessage({
-          type: 'fileChange',
-          payload: {
-            id: file.id,
-            name: currentFile.name,
-            content: {
-              text: content.text.slice(0, -1), // Remove trailing LF
-              properties,
-              yamlProperties: content.properties,
-              html: editorSvc.previewCtx.html,
+        window.parent.postMessage(
+          {
+            type: 'fileChange',
+            payload: {
+              id: file.id,
+              name: currentFile.name,
+              content: {
+                text: content.text.slice(0, -1), // Remove trailing LF
+                properties,
+                yamlProperties: content.properties,
+                html: editorSvc.previewCtx.html,
+              },
             },
           },
-        }, origin);
+          origin,
+        );
       }
     }, 25);
 

@@ -60,13 +60,9 @@ function cledit(contentElt, scrollEltOpt, isMarkdown = false) {
 
   function setContent(value, noUndo, maxStartOffsetOpt) {
     const textContent = getTextContent();
-    const maxStartOffset = maxStartOffsetOpt != null && maxStartOffsetOpt < textContent.length
-      ? maxStartOffsetOpt
-      : textContent.length - 1;
-    const startOffset = Math.min(
-      diffMatchPatch.diff_commonPrefix(textContent, value),
-      maxStartOffset,
-    );
+    const maxStartOffset =
+      maxStartOffsetOpt != null && maxStartOffsetOpt < textContent.length ? maxStartOffsetOpt : textContent.length - 1;
+    const startOffset = Math.min(diffMatchPatch.diff_commonPrefix(textContent, value), maxStartOffset);
     const endOffset = Math.min(
       diffMatchPatch.diff_commonSuffix(textContent, value),
       textContent.length - startOffset,
@@ -124,10 +120,11 @@ function cledit(contentElt, scrollEltOpt, isMarkdown = false) {
   const triggerSpellCheck = debounce(() => {
     // Hack for Chrome to trigger the spell checker
     const selection = window.getSelection();
-    if (selectionMgr.hasFocus()
-      && !highlighter.isComposing
-      && selectionMgr.selectionStart === selectionMgr.selectionEnd
-      && selection.modify
+    if (
+      selectionMgr.hasFocus() &&
+      !highlighter.isComposing &&
+      selectionMgr.selectionStart === selectionMgr.selectionEnd &&
+      selection.modify
     ) {
       if (selectionMgr.selectionStart) {
         selection.modify('move', 'backward', 'character');
@@ -258,51 +255,51 @@ function cledit(contentElt, scrollEltOpt, isMarkdown = false) {
   window.addEventListener('resize', windowResizeListener);
 
   // Provokes selection changes and does not fire mouseup event on Chrome/OSX
+  contentElt.addEventListener('contextmenu', selectionMgr.saveSelectionState.cl_bind(selectionMgr, true, false));
+
   contentElt.addEventListener(
-    'contextmenu',
-    selectionMgr.saveSelectionState.cl_bind(selectionMgr, true, false),
+    'keydown',
+    keydownHandler((evt) => {
+      selectionMgr.saveSelectionState();
+
+      // Perform keystroke
+      let contentChanging = false;
+      const textContent = getTextContent();
+      let min = Math.min(selectionMgr.selectionStart, selectionMgr.selectionEnd);
+      let max = Math.max(selectionMgr.selectionStart, selectionMgr.selectionEnd);
+      const state = {
+        before: textContent.slice(0, min),
+        after: textContent.slice(max),
+        selection: textContent.slice(min, max),
+        isBackwardSelection: selectionMgr.selectionStart > selectionMgr.selectionEnd,
+      };
+      editor.$keystrokes.cl_some((keystroke) => {
+        if (!keystroke.handler(evt, state, editor)) {
+          return false;
+        }
+        const newContent = state.before + state.selection + state.after;
+        if (newContent !== getTextContent()) {
+          editor.setContent(newContent, false, min);
+          contentChanging = true;
+          skipSaveSelection = true;
+          highlighter.cancelComposition = true;
+        }
+        min = state.before.length;
+        max = min + state.selection.length;
+        selectionMgr.setSelectionStartEnd(
+          state.isBackwardSelection ? max : min,
+          state.isBackwardSelection ? min : max,
+          !contentChanging, // Expect a restore selection on mutation event
+        );
+        return true;
+      });
+
+      if (!contentChanging) {
+        // Optimization to avoid saving selection
+        adjustCursorPosition();
+      }
+    }),
   );
-
-  contentElt.addEventListener('keydown', keydownHandler((evt) => {
-    selectionMgr.saveSelectionState();
-
-    // Perform keystroke
-    let contentChanging = false;
-    const textContent = getTextContent();
-    let min = Math.min(selectionMgr.selectionStart, selectionMgr.selectionEnd);
-    let max = Math.max(selectionMgr.selectionStart, selectionMgr.selectionEnd);
-    const state = {
-      before: textContent.slice(0, min),
-      after: textContent.slice(max),
-      selection: textContent.slice(min, max),
-      isBackwardSelection: selectionMgr.selectionStart > selectionMgr.selectionEnd,
-    };
-    editor.$keystrokes.cl_some((keystroke) => {
-      if (!keystroke.handler(evt, state, editor)) {
-        return false;
-      }
-      const newContent = state.before + state.selection + state.after;
-      if (newContent !== getTextContent()) {
-        editor.setContent(newContent, false, min);
-        contentChanging = true;
-        skipSaveSelection = true;
-        highlighter.cancelComposition = true;
-      }
-      min = state.before.length;
-      max = min + state.selection.length;
-      selectionMgr.setSelectionStartEnd(
-        state.isBackwardSelection ? max : min,
-        state.isBackwardSelection ? min : max,
-        !contentChanging, // Expect a restore selection on mutation event
-      );
-      return true;
-    });
-
-    if (!contentChanging) {
-      // Optimization to avoid saving selection
-      adjustCursorPosition();
-    }
-  }));
 
   contentElt.addEventListener('compositionstart', () => {
     highlighter.isComposing += 1;
@@ -340,7 +337,7 @@ function cledit(contentElt, scrollEltOpt, isMarkdown = false) {
     });
 
     turndownService = new TurndownService(store.getters['data/computedSettings'].turndown);
-    turndownService.escape = str => str; // Disable escaping
+    turndownService.escape = (str) => str; // Disable escaping
   }
 
   contentElt.addEventListener('paste', (evt) => {
@@ -354,8 +351,7 @@ function cledit(contentElt, scrollEltOpt, isMarkdown = false) {
         try {
           const html = clipboardData.getData('text/html');
           if (html) {
-            const sanitizedHtml = htmlSanitizer.sanitizeHtml(html)
-              .replace(/&#160;/g, ' '); // Replace non-breaking spaces with classic spaces
+            const sanitizedHtml = htmlSanitizer.sanitizeHtml(html).replace(/&#160;/g, ' '); // Replace non-breaking spaces with classic spaces
             if (sanitizedHtml) {
               data = turndownService.turndown(sanitizedHtml);
             }
@@ -407,15 +403,18 @@ function cledit(contentElt, scrollEltOpt, isMarkdown = false) {
   editor.removeMarker = removeMarker;
 
   editor.init = (opts = {}) => {
-    const options = ({
+    const options = {
       getCursorFocusRatio() {
         return 0.1;
       },
       sectionHighlighter(section) {
-        return section.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\u00a0/g, ' ');
+        return section.text
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/\u00a0/g, ' ');
       },
       sectionDelimiter: '',
-    }).cl_extend(opts);
+    }.cl_extend(opts);
     editor.options = options;
 
     if (options.content !== undefined) {

@@ -6,18 +6,10 @@ import badgeSvc from './badgeSvc';
 const forbiddenFolderNameMatcher = /^\.stackedit-data$|^\.stackedit-trash$|\.md$|\.sync$|\.publish$/;
 
 export default {
-
   /**
    * Create a file in the store with the specified fields.
    */
-  async createFile({
-    name,
-    parentId,
-    text,
-    properties,
-    discussions,
-    comments,
-  } = {}, background = false) {
+  async createFile({ name, parentId, text, properties, discussions, comments } = {}, background = false) {
     const id = utils.uid();
     const item = {
       id,
@@ -27,8 +19,7 @@ export default {
     const content = {
       id: `${id}/content`,
       text: utils.sanitizeText(text || store.getters['data/computedSettings'].newFileContent),
-      properties: utils
-        .sanitizeText(properties || store.getters['data/computedSettings'].newFileProperties),
+      properties: utils.sanitizeText(properties || store.getters['data/computedSettings'].newFileProperties),
       discussions: discussions || {},
       comments: comments || {},
     };
@@ -97,7 +88,7 @@ export default {
       const parentPath = store.getters.pathsByItemId[item.parentId] || '';
       const path = parentPath + sanitizedName;
       const items = store.getters.itemsByPath[path] || [];
-      if (items.some(itemWithSamePath => itemWithSamePath.id !== id)) {
+      if (items.some((itemWithSamePath) => itemWithSamePath.id !== id)) {
         await store.dispatch('modal/open', {
           type: 'pathConflict',
           item,
@@ -116,7 +107,7 @@ export default {
    */
   setOrPatchItem(patch) {
     const item = {
-      ...store.getters.allItemsById[patch.id] || patch,
+      ...(store.getters.allItemsById[patch.id] || patch),
     };
     if (!item.id) {
       return null;
@@ -159,11 +150,13 @@ export default {
     // Delete the contentState
     store.commit('contentState/deleteItem', `${fileId}/contentState`);
     // Delete sync locations
-    (store.getters['syncLocation/groupedByFileId'][fileId] || [])
-      .forEach(item => store.commit('syncLocation/deleteItem', item.id));
+    (store.getters['syncLocation/groupedByFileId'][fileId] || []).forEach((item) =>
+      store.commit('syncLocation/deleteItem', item.id),
+    );
     // Delete publish locations
-    (store.getters['publishLocation/groupedByFileId'][fileId] || [])
-      .forEach(item => store.commit('publishLocation/deleteItem', item.id));
+    (store.getters['publishLocation/groupedByFileId'][fileId] || []).forEach((item) =>
+      store.commit('publishLocation/deleteItem', item.id),
+    );
   },
 
   /**
@@ -171,7 +164,7 @@ export default {
    */
   sanitizeWorkspace(idsToKeep) {
     // Detect and remove circular references for all folders.
-    store.getters['folder/items'].forEach(folder => this.removeCircularReference(folder));
+    store.getters['folder/items'].forEach((folder) => this.removeCircularReference(folder));
 
     this.ensureUniquePaths(idsToKeep);
     this.ensureUniqueLocations(idsToKeep);
@@ -202,9 +195,7 @@ export default {
    */
   ensureUniquePaths(idsToKeep = {}) {
     if (store.getters['workspace/currentWorkspaceHasUniquePaths']) {
-      if (Object.keys(store.getters.pathsByItemId)
-        .some(id => !idsToKeep[id] && this.makePathUnique(id))
-      ) {
+      if (Object.keys(store.getters.pathsByItemId).some((id) => !idsToKeep[id] && this.makePathUnique(id))) {
         // Just changed one item path, restart
         this.ensureUniquePaths(idsToKeep);
       }
@@ -279,9 +270,7 @@ export default {
   ensureUniqueLocations(idsToKeep = {}) {
     ['syncLocation', 'publishLocation'].forEach((type) => {
       store.getters[`${type}/items`].forEach((item) => {
-        if (!idsToKeep[item.id]
-          && store.getters[`${type}/groupedByFileIdAndHash`][item.fileId][item.hash].length > 1
-        ) {
+        if (!idsToKeep[item.id] && store.getters[`${type}/groupedByFileIdAndHash`][item.fileId][item.hash].length > 1) {
           store.commit(`${item.type}/deleteItem`, item.id);
         }
       });

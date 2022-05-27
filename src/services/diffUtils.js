@@ -39,14 +39,10 @@ function makePatchableText(content, markerKeys, markerIdxMap) {
 
   let lastOffset = 0;
   let result = '';
-  markers
-    .sort((marker1, marker2) => marker1.offset - marker2.offset)
-    .forEach((marker) => {
-      result +=
-        content.text.slice(lastOffset, marker.offset) +
-        String.fromCharCode(0xe000 + marker.idx); // Use a character from the private use area
-      lastOffset = marker.offset;
-    });
+  markers.sort((marker1, marker2) => marker1.offset - marker2.offset).forEach((marker) => {
+    result += content.text.slice(lastOffset, marker.offset) + String.fromCharCode(0xe000 + marker.idx); // Use a character from the private use area
+    lastOffset = marker.offset;
+  });
   return result + content.text.slice(lastOffset);
 }
 
@@ -68,7 +64,7 @@ function restoreDiscussionOffsets(content, markerKeys) {
     // Go through markers
     let count = 0;
     content.text = content.text.replace(
-      new RegExp(`[\ue000-${String.fromCharCode((0xe000 + markerKeys.length) - 1)}]`, 'g'),
+      new RegExp(`[\ue000-${String.fromCharCode(0xe000 + markerKeys.length - 1)}]`, 'g'),
       (match, offset) => {
         const idx = match.charCodeAt(0) - 0xe000;
         const markerKey = markerKeys[idx];
@@ -97,18 +93,20 @@ function mergeText(serverText, clientText, lastMergedText) {
   const serverClientDiffs = diffMatchPatch.diff_main(serverText, clientText);
   diffMatchPatch.diff_cleanupSemantic(serverClientDiffs);
   // Fusion text is a mix of both server and client contents
-  const fusionText = serverClientDiffs.map(diff => diff[1]).join('');
+  const fusionText = serverClientDiffs.map((diff) => diff[1]).join('');
   if (!lastMergedText) {
     return fusionText;
   }
   // Let's try to find out what text has to be removed from fusion
   const intersectionText = serverClientDiffs
     // Keep only equalities
-    .filter(diff => diff[0] === DiffMatchPatch.DIFF_EQUAL)
-    .map(diff => diff[1]).join('');
-  const lastMergedTextDiffs = diffMatchPatch.diff_main(lastMergedText, intersectionText)
+    .filter((diff) => diff[0] === DiffMatchPatch.DIFF_EQUAL)
+    .map((diff) => diff[1])
+    .join('');
+  const lastMergedTextDiffs = diffMatchPatch
+    .diff_main(lastMergedText, intersectionText)
     // Keep only equalities and deletions
-    .filter(diff => diff[0] !== DiffMatchPatch.DIFF_INSERT);
+    .filter((diff) => diff[0] !== DiffMatchPatch.DIFF_INSERT);
   diffMatchPatch.diff_cleanupSemantic(lastMergedTextDiffs);
   // Make a patch with deletions only
   const patches = diffMatchPatch.patch_make(lastMergedText, lastMergedTextDiffs);
@@ -171,21 +169,13 @@ function mergeContent(serverContent, clientContent, lastMergedContent = {}) {
 
   const result = {
     text,
-    properties: mergeValues(
-      serverContent.properties,
-      clientContent.properties,
-      lastMergedContent.properties,
-    ),
+    properties: mergeValues(serverContent.properties, clientContent.properties, lastMergedContent.properties),
     discussions: mergeObjects(
       stripDiscussionOffsets(serverContent.discussions),
       stripDiscussionOffsets(clientContent.discussions),
       stripDiscussionOffsets(lastMergedContent.discussions),
     ),
-    comments: mergeObjects(
-      serverContent.comments,
-      clientContent.comments,
-      lastMergedContent.comments,
-    ),
+    comments: mergeObjects(serverContent.comments, clientContent.comments, lastMergedContent.comments),
   };
   restoreDiscussionOffsets(result, markerKeys);
   return result;

@@ -49,9 +49,8 @@ export default {
       }
     });
 
-    await utils.awaitSequence(
-      Object.keys(folderNameMap),
-      async externalId => workspaceSvc.setOrPatchItem({
+    await utils.awaitSequence(Object.keys(folderNameMap), async (externalId) =>
+      workspaceSvc.setOrPatchItem({
         id: folderIdMap[externalId],
         type: 'folder',
         name: folderNameMap[externalId],
@@ -59,16 +58,18 @@ export default {
       }),
     );
 
-    await utils.awaitSequence(
-      Object.keys(fileNameMap),
-      async externalId => workspaceSvc.createFile({
-        name: fileNameMap[externalId],
-        parentId: folderIdMap[parentIdMap[externalId]],
-        text: textMap[externalId],
-        properties: propertiesMap[externalId],
-        discussions: discussionsMap[externalId],
-        comments: commentsMap[externalId],
-      }, true),
+    await utils.awaitSequence(Object.keys(fileNameMap), async (externalId) =>
+      workspaceSvc.createFile(
+        {
+          name: fileNameMap[externalId],
+          parentId: folderIdMap[parentIdMap[externalId]],
+          text: textMap[externalId],
+          properties: propertiesMap[externalId],
+          discussions: discussionsMap[externalId],
+          comments: commentsMap[externalId],
+        },
+        true,
+      ),
     );
   },
 };

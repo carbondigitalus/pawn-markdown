@@ -7,8 +7,8 @@ import workspaceSvc from '../../workspaceSvc';
 const dataExtractor = /<!--stackedit_data:([A-Za-z0-9+/=\s]+)-->\s*$/;
 
 export default class Provider {
-  prepareChanges = changes => changes
-  onChangesApplied = () => {}
+  prepareChanges = (changes) => changes;
+  onChangesApplied = () => {};
 
   constructor(props) {
     Object.assign(this, props);

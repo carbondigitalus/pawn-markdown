@@ -9,11 +9,15 @@ import badgeSvc from './badgeSvc';
 
 const hasCurrentFilePublishLocations = () => !!store.getters['publishLocation/current'].length;
 
-const loader = type => fileId => localDbSvc.loadItem(`${fileId}/${type}`)
-  // Item does not exist, create it
-  .catch(() => store.commit(`${type}/setItem`, {
-    id: `${fileId}/${type}`,
-  }));
+const loader = (type) => (fileId) =>
+  localDbSvc
+    .loadItem(`${fileId}/${type}`)
+    // Item does not exist, create it
+    .catch(() =>
+      store.commit(`${type}/setItem`, {
+        id: `${fileId}/${type}`,
+      }),
+    );
 const loadContent = loader('content');
 
 const ensureArray = (value) => {
@@ -65,9 +69,7 @@ const publish = async (publishLocation) => {
 const publishFile = async (fileId) => {
   let counter = 0;
   await loadContent(fileId);
-  const publishLocations = [
-    ...store.getters['publishLocation/filteredGroupedByFileId'][fileId] || [],
-  ];
+  const publishLocations = [...(store.getters['publishLocation/filteredGroupedByFileId'][fileId] || [])];
   try {
     await utils.awaitSequence(publishLocations, async (publishLocation) => {
       await store.dispatch('queue/doWithLocation', {
@@ -76,9 +78,7 @@ const publishFile = async (fileId) => {
           const publishLocationToStore = await publish(publishLocation);
           try {
             // Replace publish location if modified
-            if (utils.serializeObject(publishLocation) !==
-              utils.serializeObject(publishLocationToStore)
-            ) {
+            if (utils.serializeObject(publishLocation) !== utils.serializeObject(publishLocationToStore)) {
               store.commit('publishLocation/patchItem', publishLocationToStore);
               workspaceSvc.ensureUniqueLocations();
             }
@@ -128,17 +128,14 @@ const requestPublish = () => {
 const createPublishLocation = (publishLocation, featureId) => {
   const currentFile = store.getters['file/current'];
   publishLocation.fileId = currentFile.id;
-  store.dispatch(
-    'queue/enqueue',
-    async () => {
-      const publishLocationToStore = await publish(publishLocation);
-      workspaceSvc.addPublishLocation(publishLocationToStore);
-      store.dispatch('notification/info', `A new publication location was added to "${currentFile.name}".`);
-      if (featureId) {
-        badgeSvc.addBadge(featureId);
-      }
-    },
-  );
+  store.dispatch('queue/enqueue', async () => {
+    const publishLocationToStore = await publish(publishLocation);
+    workspaceSvc.addPublishLocation(publishLocationToStore);
+    store.dispatch('notification/info', `A new publication location was added to "${currentFile.name}".`);
+    if (featureId) {
+      badgeSvc.addBadge(featureId);
+    }
+  });
 };
 
 export default {

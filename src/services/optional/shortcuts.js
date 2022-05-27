@@ -6,16 +6,15 @@ import syncSvc from '../../services/syncSvc';
 // Skip shortcuts if modal is open or editor is hidden
 Mousetrap.prototype.stopCallback = () => store.getters['modal/config'] || !store.getters['content/isCurrentEditable'];
 
-const pagedownHandler = name => () => {
+const pagedownHandler = (name) => () => {
   editorSvc.pagedownEditor.uiManager.doClick(name);
   return true;
 };
 
-const findReplaceOpener = type => () => {
+const findReplaceOpener = (type) => () => {
   store.dispatch('findReplace/open', {
     type,
-    findText: editorSvc.clEditor.selectionMgr.hasFocus() &&
-      editorSvc.clEditor.selectionMgr.getSelectedText(),
+    findText: editorSvc.clEditor.selectionMgr.hasFocus() && editorSvc.clEditor.selectionMgr.getSelectedText(),
   });
   return true;
 };
@@ -53,7 +52,7 @@ const methods = {
           if (`${range}` === text) {
             range.deleteContents();
             range.insertNode(document.createTextNode(replacement));
-            offset = (offset - text.length) + replacement.length;
+            offset = offset - text.length + replacement.length;
             selectionMgr.setSelectionStartEnd(offset, offset);
             selectionMgr.updateCursorCoordinates(true);
           }
@@ -84,7 +83,8 @@ store.watch(
         }
       }
     });
-  }, {
+  },
+  {
     immediate: true,
   },
 );

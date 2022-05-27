@@ -1,4 +1,4 @@
-const setter = propertyName => (state, value) => {
+const setter = (propertyName) => (state, value) => {
   state[propertyName] = value;
 };
 
@@ -35,9 +35,8 @@ export default {
       if (state.isEmpty) {
         commit('setIsEmpty', false);
       }
-      const newQueue = queue
-        .then(() => checkOffline())
-        .then(() => Promise.resolve()
+      const newQueue = queue.then(() => checkOffline()).then(() =>
+        Promise.resolve()
           .then(() => cb())
           .catch((err) => {
             console.error(err); // eslint-disable-line no-console
@@ -48,27 +47,32 @@ export default {
             if (newQueue === queue) {
               commit('setIsEmpty', true);
             }
-          }));
+          }),
+      );
       queue = newQueue;
     },
     enqueueSyncRequest({ state, commit, dispatch }, cb) {
       if (!state.isSyncRequested) {
         commit('setIsSyncRequested', true);
         const unset = () => commit('setIsSyncRequested', false);
-        dispatch('enqueue', () => cb().then(unset, (err) => {
-          unset();
-          throw err;
-        }));
+        dispatch('enqueue', () =>
+          cb().then(unset, (err) => {
+            unset();
+            throw err;
+          }),
+        );
       }
     },
     enqueuePublishRequest({ state, commit, dispatch }, cb) {
       if (!state.isSyncRequested) {
         commit('setIsPublishRequested', true);
         const unset = () => commit('setIsPublishRequested', false);
-        dispatch('enqueue', () => cb().then(unset, (err) => {
-          unset();
-          throw err;
-        }));
+        dispatch('enqueue', () =>
+          cb().then(unset, (err) => {
+            unset();
+            throw err;
+          }),
+        );
       }
     },
     async doWithLocation({ commit }, { location, action }) {

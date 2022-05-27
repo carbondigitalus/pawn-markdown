@@ -25,7 +25,7 @@ export default {
           commit('setStack', [config, ...state.stack]);
         });
       } finally {
-        commit('setStack', state.stack.filter((otherConfig => otherConfig !== config)));
+        commit('setStack', state.stack.filter((otherConfig) => otherConfig !== config));
       }
     },
     async hideUntil({ commit }, promise) {

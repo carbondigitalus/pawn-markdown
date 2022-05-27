@@ -44,18 +44,18 @@ Utils.debounce = (func, wait) => {
   let isExpected;
   return wait
     ? () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(func, wait);
-    }
-    : () => {
-      if (!isExpected) {
-        isExpected = true;
-        Utils.defer(() => {
-          isExpected = false;
-          func();
-        });
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(func, wait);
       }
-    };
+    : () => {
+        if (!isExpected) {
+          isExpected = true;
+          Utils.defer(() => {
+            isExpected = false;
+            func();
+          });
+        }
+      };
 };
 
 Utils.createEventHooks = (object) => {

@@ -131,24 +131,27 @@ const localDbSvc = {
   async sync() {
     return new Promise((resolve, reject) => {
       // Create the DB transaction
-      this.connection.createTx((tx) => {
-        const { lastTx } = this;
+      this.connection.createTx(
+        (tx) => {
+          const { lastTx } = this;
 
-        // Look for DB changes and apply them to the store
-        this.readAll(tx, (storeItemMap) => {
-          // Sanitize the workspace if changes have been applied
-          if (lastTx !== this.lastTx) {
-            workspaceSvc.sanitizeWorkspace();
-          }
+          // Look for DB changes and apply them to the store
+          this.readAll(tx, (storeItemMap) => {
+            // Sanitize the workspace if changes have been applied
+            if (lastTx !== this.lastTx) {
+              workspaceSvc.sanitizeWorkspace();
+            }
 
-          // Persist all the store changes into the DB
-          this.writeAll(storeItemMap, tx);
-          // Sync the localStorage
-          this.syncLocalStorage();
-          // Done
-          resolve();
-        });
-      }, () => reject(new Error('Local DB access error.')));
+            // Persist all the store changes into the DB
+            this.writeAll(storeItemMap, tx);
+            // Sync the localStorage
+            this.syncLocalStorage();
+            // Done
+            resolve();
+          });
+        },
+        () => reject(new Error('Local DB access error.')),
+      );
     });
   },
 
@@ -208,10 +211,10 @@ const localDbSvc = {
     // Remove deleted store items
     Object.keys(this.hashMap).forEach((type) => {
       // Remove this type only if file is deleted
-      let checker = cb => id => !storeItemMap[id] && cb(id);
+      let checker = (cb) => (id) => !storeItemMap[id] && cb(id);
       if (contentTypes[type]) {
         // For content types, remove item only if file is deleted
-        checker = cb => (id) => {
+        checker = (cb) => (id) => {
           if (!storeItemMap[id]) {
             const [fileId] = id.split('/');
             if (!store.state.file.itemsById[fileId]) {
@@ -220,16 +223,18 @@ const localDbSvc = {
           }
         };
       }
-      Object.keys(this.hashMap[type]).forEach(checker((id) => {
-        // Put a delete marker to notify other tabs
-        dbStore.put({
-          id,
-          type,
-          tx: incrementedTx,
-        });
-        delete this.hashMap[type][id];
-        this.lastTx = incrementedTx;
-      }));
+      Object.keys(this.hashMap[type]).forEach(
+        checker((id) => {
+          // Put a delete marker to notify other tabs
+          dbStore.put({
+            id,
+            type,
+            tx: incrementedTx,
+          });
+          delete this.hashMap[type][id];
+          this.lastTx = incrementedTx;
+        }),
+      );
     });
 
     // Put changes
@@ -286,22 +291,25 @@ const localDbSvc = {
     return new Promise((resolve, reject) => {
       // Get the item from DB
       const onError = () => reject(new Error('Data not available.'));
-      this.connection.createTx((tx) => {
-        const dbStore = tx.objectStore(dbStoreName);
-        const request = dbStore.get(id);
-        request.onsuccess = () => {
-          const dbItem = request.result;
-          if (!dbItem || !dbItem.hash) {
-            onError();
-          } else {
-            this.hashMap[dbItem.type][dbItem.id] = dbItem.hash;
-            // Put item in the store
-            dbItem.tx = undefined;
-            store.commit(`${dbItem.type}/setItem`, dbItem);
-            resolve(dbItem);
-          }
-        };
-      }, () => onError());
+      this.connection.createTx(
+        (tx) => {
+          const dbStore = tx.objectStore(dbStoreName);
+          const request = dbStore.get(id);
+          request.onsuccess = () => {
+            const dbItem = request.result;
+            if (!dbItem || !dbItem.hash) {
+              onError();
+            } else {
+              this.hashMap[dbItem.type][dbItem.id] = dbItem.hash;
+              // Put item in the store
+              dbItem.tx = undefined;
+              store.commit(`${dbItem.type}/setItem`, dbItem);
+              resolve(dbItem);
+            }
+          };
+        },
+        () => onError(),
+      );
     });
   },
 
@@ -329,8 +337,11 @@ const localDbSvc = {
   async init() {
     // Reset the app if the reset flag was passed
     if (resetApp) {
-      await Promise.all(Object.keys(store.getters['workspace/workspacesById'])
-        .map(workspaceId => workspaceSvc.removeWorkspace(workspaceId)));
+      await Promise.all(
+        Object.keys(store.getters['workspace/workspacesById']).map((workspaceId) =>
+          workspaceSvc.removeWorkspace(workspaceId),
+        ),
+      );
       constants.localStorageDataIds.forEach((id) => {
         // Clean data stored in localStorage
         localStorage.removeItem(`data/${id}`);
@@ -346,10 +357,7 @@ const localDbSvc = {
 
     // Watch workspace deletions and persist them as soon as possible
     // to make the changes available to reloading workspace tabs.
-    store.watch(
-      () => store.getters['data/workspaces'],
-      () => this.syncLocalStorage(),
-    );
+    store.watch(() => store.getters['data/workspaces'], () => this.syncLocalStorage());
 
     // Save welcome file content hash if not done already
     const hash = utils.hash(welcomeFile);
@@ -364,13 +372,14 @@ const localDbSvc = {
     }
 
     // If app was last opened 7 days ago and synchronization is off
-    if (!store.getters['workspace/syncToken'] &&
-      (store.state.workspace.lastFocus + constants.cleanTrashAfter < Date.now())
+    if (
+      !store.getters['workspace/syncToken'] &&
+      store.state.workspace.lastFocus + constants.cleanTrashAfter < Date.now()
     ) {
       // Clean files
       store.getters['file/items']
-        .filter(file => file.parentId === 'trash') // If file is in the trash
-        .forEach(file => workspaceSvc.deleteFile(file.id));
+        .filter((file) => file.parentId === 'trash') // If file is in the trash
+        .forEach((file) => workspaceSvc.deleteFile(file.id));
     }
 
     // Sync local DB periodically
@@ -390,10 +399,13 @@ const localDbSvc = {
             store.commit('file/setCurrentId', recentFile.id);
           } else {
             // If still no ID, create a new file
-            const newFile = await workspaceSvc.createFile({
-              name: 'Welcome file',
-              text: welcomeFile,
-            }, true);
+            const newFile = await workspaceSvc.createFile(
+              {
+                name: 'Welcome file',
+                text: welcomeFile,
+              },
+              true,
+            );
             // Set it as the current file
             store.commit('file/setCurrentId', newFile.id);
           }
@@ -415,10 +427,7 @@ const localDbSvc = {
             // Set last opened file
             store.dispatch('data/setLastOpenedId', currentFile.id);
             // Cancel new discussion and open the gutter if file contains discussions
-            store.commit(
-              'discussion/setCurrentDiscussionId',
-              store.getters['discussion/nextDiscussionId'],
-            );
+            store.commit('discussion/setCurrentDiscussionId', store.getters['discussion/nextDiscussionId']);
           } catch (err) {
             console.error(err); // eslint-disable-line no-console
             store.dispatch('notification/error', err);
@@ -451,11 +460,15 @@ const localDbSvc = {
   },
 };
 
-const loader = type => fileId => localDbSvc.loadItem(`${fileId}/${type}`)
-  // Item does not exist, create it
-  .catch(() => store.commit(`${type}/setItem`, {
-    id: `${fileId}/${type}`,
-  }));
+const loader = (type) => (fileId) =>
+  localDbSvc
+    .loadItem(`${fileId}/${type}`)
+    // Item does not exist, create it
+    .catch(() =>
+      store.commit(`${type}/setItem`, {
+        id: `${fileId}/${type}`,
+      }),
+    );
 localDbSvc.loadSyncedContent = loader('syncedContent');
 localDbSvc.loadContentState = loader('contentState');
 

@@ -4,15 +4,17 @@ import store from '../../../store';
 import userSvc from '../../userSvc';
 import badgeSvc from '../../badgeSvc';
 
-const request = ({ accessToken, serverUrl }, options) => networkSvc.request({
-  ...options,
-  url: `${serverUrl}/api/v4/${options.url}`,
-  headers: {
-    ...options.headers || {},
-    Authorization: `Bearer ${accessToken}`,
-  },
-})
-  .then(res => res.body);
+const request = ({ accessToken, serverUrl }, options) =>
+  networkSvc
+    .request({
+      ...options,
+      url: `${serverUrl}/api/v4/${options.url}`,
+      headers: {
+        ...(options.headers || {}),
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .then((res) => res.body);
 
 const getCommitMessage = (name, path) => {
   const message = store.getters['data/computedSettings'].git[name];
@@ -63,9 +65,12 @@ export default {
     );
 
     // Call the user info endpoint
-    const user = await request({ accessToken, serverUrl }, {
-      url: 'user',
-    });
+    const user = await request(
+      { accessToken, serverUrl },
+      {
+        url: 'user',
+      },
+    );
     const uniqueSub = `${serverUrl}/${user.id}`;
     userSvc.addUserInfo({
       id: `${subPrefix}:${uniqueSub}`,
@@ -113,11 +118,7 @@ export default {
   /**
    * https://docs.gitlab.com/ee/api/repositories.html#list-repository-tree
    */
-  async getTree({
-    token,
-    projectId,
-    branch,
-  }) {
+  async getTree({ token, projectId, branch }) {
     return request(token, {
       url: `projects/${encodeURIComponent(projectId)}/repository/tree`,
       params: {
@@ -131,12 +132,7 @@ export default {
   /**
    * https://docs.gitlab.com/ee/api/commits.html#list-repository-commits
    */
-  async getCommits({
-    token,
-    projectId,
-    branch,
-    path,
-  }) {
+  async getCommits({ token, projectId, branch, path }) {
     return request(token, {
       url: `projects/${encodeURIComponent(projectId)}/repository/commits`,
       params: {
@@ -150,14 +146,7 @@ export default {
    * https://docs.gitlab.com/ee/api/repository_files.html#create-new-file-in-repository
    * https://docs.gitlab.com/ee/api/repository_files.html#update-existing-file-in-repository
    */
-  async uploadFile({
-    token,
-    projectId,
-    branch,
-    path,
-    content,
-    sha,
-  }) {
+  async uploadFile({ token, projectId, branch, path, content, sha }) {
     return request(token, {
       method: sha ? 'PUT' : 'POST',
       url: `projects/${encodeURIComponent(projectId)}/repository/files/${encodeURIComponent(path)}`,
@@ -173,13 +162,7 @@ export default {
   /**
    * https://docs.gitlab.com/ee/api/repository_files.html#delete-existing-file-in-repository
    */
-  async removeFile({
-    token,
-    projectId,
-    branch,
-    path,
-    sha,
-  }) {
+  async removeFile({ token, projectId, branch, path, sha }) {
     return request(token, {
       method: 'DELETE',
       url: `projects/${encodeURIComponent(projectId)}/repository/files/${encodeURIComponent(path)}`,
@@ -194,12 +177,7 @@ export default {
   /**
    * https://docs.gitlab.com/ee/api/repository_files.html#get-file-from-repository
    */
-  async downloadFile({
-    token,
-    projectId,
-    branch,
-    path,
-  }) {
+  async downloadFile({ token, projectId, branch, path }) {
     const res = await request(token, {
       url: `projects/${encodeURIComponent(projectId)}/repository/files/${encodeURIComponent(path)}`,
       params: { ref: branch },

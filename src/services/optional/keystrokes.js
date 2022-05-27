@@ -8,10 +8,7 @@ let clearNewline;
 let lastSelection;
 
 function fixNumberedList(state, indent) {
-  if (state.selection
-    || indent === undefined
-    || !store.getters['data/computedSettings'].editor.listAutoNumber
-  ) {
+  if (state.selection || indent === undefined || !store.getters['data/computedSettings'].editor.listAutoNumber) {
     return;
   }
   const spaceIndent = indent.replace(/\t/g, '    ');
@@ -31,11 +28,9 @@ function fixNumberedList(state, indent) {
     }
 
     lines.some((line) => {
-      const match = line.replace(
-        /^[ \t]*/,
-        wholeMatch => wholeMatch.replace(/\t/g, '    '),
-      ).match(indentRegex);
-      if (!match || line.match(/^#+ /)) { // Line not empty, not indented, or title
+      const match = line.replace(/^[ \t]*/, (wholeMatch) => wholeMatch.replace(/\t/g, '    ')).match(indentRegex);
+      if (!match || line.match(/^#+ /)) {
+        // Line not empty, not indented, or title
         flush();
         return true;
       }
@@ -85,7 +80,10 @@ function fixNumberedList(state, indent) {
     if (!hits.length) {
       idx += 1;
     } else {
-      lines = lines.slice(0, idx).concat(hits).concat(lines.slice(idx + hits.length));
+      lines = lines
+        .slice(0, idx)
+        .concat(hits)
+        .concat(lines.slice(idx + hits.length));
       idx += hits.length;
     }
   }
@@ -139,8 +137,7 @@ function tabKeyHandler(evt, state) {
     return false;
   }
 
-  const strSplice = (str, i, remove, add) =>
-    str.slice(0, i) + (add || '') + str.slice(i + (+remove || 0));
+  const strSplice = (str, i, remove, add) => str.slice(0, i) + (add || '') + str.slice(i + (+remove || 0));
 
   evt.preventDefault();
   const isInverse = evt.shiftKey;
@@ -166,9 +163,9 @@ function tabKeyHandler(evt, state) {
     }
   } else if (
     // If selection is not empty
-    state.selection
+    state.selection ||
     // Or we are in an indented paragraph and the cursor is over the indentation characters
-    || (indentMatch && indentMatch[0].length >= lastLine.length)
+    (indentMatch && indentMatch[0].length >= lastLine.length)
   ) {
     state.before = strSplice(state.before, lastLf, 0, '\t');
     state.selection = state.selection.replace(/\n(?=.)/g, '\n\t');

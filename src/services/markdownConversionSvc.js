@@ -9,7 +9,7 @@ const htmlSectionMarker = '\uF111\uF222\uF333\uF444';
 const diffMatchPatch = new DiffMatchPatch();
 
 // Create aliases for syntax highlighting
-const languageAliases = ({
+const languageAliases = {
   js: 'javascript',
   json: 'javascript',
   html: 'markup',
@@ -20,7 +20,7 @@ const languageAliases = ({
   yml: 'yaml',
   ps1: 'powershell',
   psm1: 'powershell',
-});
+};
 Object.entries(languageAliases).forEach(([alias, language]) => {
   Prism.languages[alias] = Prism.languages[language];
 });
@@ -41,19 +41,11 @@ Object.entries(Prism.languages).forEach(([name, language]) => {
 
 // Disable spell checking in specific tokens
 const noSpellcheckTokens = Object.create(null);
-[
-  'code',
-  'pre',
-  'pre gfm',
-  'math block',
-  'math inline',
-  'math expr block',
-  'math expr inline',
-  'latex block',
-]
-  .forEach((key) => {
+['code', 'pre', 'pre gfm', 'math block', 'math inline', 'math expr block', 'math expr inline', 'latex block'].forEach(
+  (key) => {
     noSpellcheckTokens[key] = true;
-  });
+  },
+);
 Prism.hooks.add('wrap', (env) => {
   if (noSpellcheckTokens[env.type]) {
     env.attributes.spellcheck = 'false';
@@ -76,19 +68,10 @@ const startSectionBlockTypeMap = createFlagMap([
   'hr',
   'dl_open',
 ]);
-const listBlockTypeMap = createFlagMap([
-  'bullet_list_open',
-  'ordered_list_open',
-]);
-const blockquoteBlockTypeMap = createFlagMap([
-  'blockquote_open',
-]);
-const tableBlockTypeMap = createFlagMap([
-  'table_open',
-]);
-const deflistBlockTypeMap = createFlagMap([
-  'dl_open',
-]);
+const listBlockTypeMap = createFlagMap(['bullet_list_open', 'ordered_list_open']);
+const blockquoteBlockTypeMap = createFlagMap(['blockquote_open']);
+const tableBlockTypeMap = createFlagMap(['table_open']);
+const deflistBlockTypeMap = createFlagMap(['dl_open']);
 
 function hashArray(arr, valueHash, valueArray) {
   const hash = [];
@@ -221,7 +204,7 @@ export default {
     // so prevent from converting it again.
     if (!parsingCtx.markdownState.isConverted) {
       // Skip 2 first rules previously passed in parseSections
-      parsingCtx.markdownCoreRules.slice(2).forEach(rule => rule(parsingCtx.markdownState));
+      parsingCtx.markdownCoreRules.slice(2).forEach((rule) => rule(parsingCtx.markdownState));
       parsingCtx.markdownState.isConverted = true;
     }
     const { tokens } = parsingCtx.markdownState;
@@ -239,16 +222,10 @@ export default {
     const newSectionHash = hashArray(htmlSectionList, valueHash, valueArray);
     let htmlSectionDiff;
     if (previousConversionCtx) {
-      const oldSectionHash = hashArray(
-        previousConversionCtx.htmlSectionList,
-        valueHash,
-        valueArray,
-      );
+      const oldSectionHash = hashArray(previousConversionCtx.htmlSectionList, valueHash, valueArray);
       htmlSectionDiff = diffMatchPatch.diff_main(oldSectionHash, newSectionHash, false);
     } else {
-      htmlSectionDiff = [
-        [1, newSectionHash],
-      ];
+      htmlSectionDiff = [[1, newSectionHash]];
     }
     return {
       text: parsingCtx.text,
@@ -267,7 +244,6 @@ export default {
    */
   highlight(markdown, converter = this.defaultConverter, grammars = this.defaultPrismGrammars) {
     const parsingCtx = this.parseSections(converter, markdown);
-    return parsingCtx.sections
-      .map(section => Prism.highlight(section.text, grammars[section.data])).join('');
+    return parsingCtx.sections.map((section) => Prism.highlight(section.text, grammars[section.data])).join('');
   },
 };
