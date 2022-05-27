@@ -16,7 +16,6 @@
     "unit-with-coverage": "jest --config test/unit/jest.conf.js --runInBand --coverage",
     "preversion": "npm run test",
     "postversion": "git push origin master --tags && npm publish",
-    "minor": "npm version minor -m \"Tag v%s\"",
     "major": "npm version major -m \"Tag v%s\"",
     "chart": "mkdir -p dist && rm -rf dist/stackedit && cp -r chart dist/stackedit && sed -i.bak -e s/STACKEDIT_VERSION/$npm_package_version/g dist/stackedit/*.yaml && rm dist/stackedit/*.yaml.bak"
   },
