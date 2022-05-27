@@ -37,8 +37,7 @@
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-vue": "^9.0.1",
     "jest": "^28.1.0",
-    "webpack": "^5.72.1",
-    "webpack-bundle-analyzer": "^4.5.0"
+    "webpack": "^5.72.1"
   },
   "dependencies": {
     "@vue/compat": "^3.2.36",
