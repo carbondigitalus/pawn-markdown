@@ -12,7 +12,6 @@
     "start:dev": "node build/dev-server.js",
     "build": "node build/build.js && npm run build-style",
     "build-style": "webpack --config build/webpack.style.conf.js",
-    "lint": "eslint --ext .js,.vue src server",
     "unit": "jest --config test/unit/jest.conf.js --runInBand",
     "unit-with-coverage": "jest --config test/unit/jest.conf.js --runInBand --coverage",
     "test": "npm run lint && npm run unit",
