@@ -1,8 +1,0 @@
-{
-  "processors": [
-    "stylelint-processor-html"
-  ],
-  "rules": {
-    "no-empty-source": null
-  }
-}
