@@ -42,7 +42,6 @@
   "dependencies": {
     "abcjs": "^6.0.2",
     "autoprefixer": "^10.4.7",
-    "aws-sdk": "^2.1144.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.2.5",
     "babel-plugin-dynamic-import-node": "^2.3.3",
