@@ -38,7 +38,8 @@
     "eslint-plugin-vue": "^9.0.1",
     "jest": "^28.1.0",
     "jest-raw-loader": "^1.0.1",
-    "jest-serializer-vue": "^2.0.2"
+    "jest-serializer-vue": "^2.0.2",
+    "vue-jest": "^3.0.7"
   },
   "dependencies": {
     "@vue/compat": "^3.2.36",
@@ -123,7 +124,6 @@
     "turndown": "^7.1.1",
     "url-loader": "^4.1.1",
     "vue": "^3.2.36",
-    "vue-jest": "^3.0.7",
     "vue-loader": "^17.0.0",
     "vue-style-loader": "^4.1.3",
     "vue-template-compiler": "^2.6.14",
