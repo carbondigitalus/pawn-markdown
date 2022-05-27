@@ -35,7 +35,10 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.2.0",
     "eslint-plugin-promise": "^6.0.0",
-    "eslint-plugin-vue": "^9.0.1"
+    "eslint-plugin-vue": "^9.0.1",
+    "jest": "^28.1.0",
+    "jest-raw-loader": "^1.0.1",
+    "jest-serializer-vue": "^2.0.2"
   },
   "dependencies": {
     "@vue/compat": "^3.2.36",
@@ -81,9 +84,6 @@
     "identity-obj-proxy": "^3.0.0",
     "ignore-loader": "^0.1.2",
     "indexeddbshim": "^10.0.0",
-    "jest": "^28.1.0",
-    "jest-raw-loader": "^1.0.1",
-    "jest-serializer-vue": "^2.0.2",
     "js-yaml": "^4.1.0",
     "katex": "^0.15.6",
     "markdown-it": "^13.0.1",
