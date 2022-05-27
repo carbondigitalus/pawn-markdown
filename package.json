@@ -38,8 +38,6 @@
     "eslint-plugin-vue": "^9.0.1",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "jest": "^28.1.0",
-    "jest-serializer-vue": "^2.0.2",
-    "optimize-css-assets-webpack-plugin": "^6.0.1",
     "stylelint-webpack-plugin": "^3.3.0",
     "vue-jest": "^3.0.7",
     "webpack": "^5.72.1",
