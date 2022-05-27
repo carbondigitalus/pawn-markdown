@@ -12,8 +12,7 @@
     "start:dev": "node build/dev-server.js",
     "build": "node build/build.js && npm run build-style",
     "test:unit": "jest --config test/unit/jest.conf.js --runInBand",
-    "test:unit:report": "jest --config test/unit/jest.conf.js --runInBand --coverage",
-    "chart": "mkdir -p dist && rm -rf dist/stackedit && cp -r chart dist/stackedit && sed -i.bak -e s/STACKEDIT_VERSION/$npm_package_version/g dist/stackedit/*.yaml && rm dist/stackedit/*.yaml.bak"
+    "test:unit:report": "jest --config test/unit/jest.conf.js --runInBand --coverage"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
